@@ -1,619 +1,86 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход - АгроЗаявки</title>
-    <style>
-        :root {
-            --primary-color: #2E7D32;
-            --secondary-color: #FFA726;
-            --background-color: #F5F5F5;
-            --text-color: #212121;
-            --error-color: #D32F2F;
-            --success-color: #388E3C;
-            --white: #FFFFFF;
-            --gray-light: #E0E0E0;
-            --gray-medium: #9E9E9E;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
-            --border-radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            background: linear-gradient(135deg, var(--primary-color), #4CAF50);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .login-container {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 400px;
-            padding: 2rem;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            text-decoration: none;
-            margin-bottom: 0.5rem;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--secondary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: var(--white);
-        }
-
-        .page-title {
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .page-subtitle {
-            color: var(--gray-medium);
-            font-size: 0.9rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-            outline: none;
-        }
-
-        .form-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
-
-        .form-input.error {
-            border-color: var(--error-color);
-        }
-
-        .error-message {
-            color: var(--error-color);
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            padding: 0.75rem;
-            background: rgba(211, 47, 47, 0.1);
-            border-radius: var(--border-radius);
-            border-left: 4px solid var(--error-color);
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .btn {
-            width: 100%;
-            padding: 0.875rem;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: #1B5E20;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-        }
-
-        .btn:disabled {
-            background: var(--gray-medium);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .loading {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid var(--white);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .links-section {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--gray-light);
-        }
-
-        .links-section a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .links-section a:hover {
-            color: var(--secondary-color);
-        }
-
-        .home-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            color: var(--gray-medium);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: var(--transition);
-        }
-
-        .home-link:hover {
-            color: var(--primary-color);
-        }
-
-        .notification {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            color: var(--white);
-            font-weight: 500;
-            box-shadow: var(--shadow);
-            z-index: 1000;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
-        }
-
-        .notification.success {
-            background: var(--success-color);
-        }
-
-        .notification.error {
-            background: var(--error-color);
-        }
-
-        .notification.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .demo-info {
-            background: rgba(46, 125, 50, 0.1);
-            border: 1px solid var(--primary-color);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
-        .demo-info h4 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .demo-accounts {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .demo-account {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            background: var(--white);
-            border-radius: 4px;
-            border: 1px solid var(--gray-light);
-        }
-
-        .demo-account span {
-            font-family: monospace;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 1.5rem;
-                margin: 0.5rem;
-            }
-            
-            .notification {
-                top: 1rem;
-                right: 1rem;
-                left: 1rem;
-                transform: translateY(-100%);
-            }
-            
-            .notification.show {
-                transform: translateY(0);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <div class="logo-section">
-            <a href="index.html" class="home-link">
-                ← Вернуться на главную
-            </a>
-            <a href="index.html" class="logo">
-                <div class="logo-icon">🌾</div>
-                АгроЗаявки
-            </a>
-            <h1 class="page-title">Вход в систему</h1>
-            <p class="page-subtitle">Войдите в свой аккаунт для продолжения работы</p>
-        </div>
-
-        <div class="demo-info">
-            <h4>Демо-аккаунты:</h4>
-            <div class="demo-accounts">
-                <div class="demo-account">
-                    <span>admin / admin</span>
-                    <small>(Администратор)</small>
-                </div>
-            </div>
-            <small>Или зарегистрируйте новый аккаунт</small>
-        </div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="login" class="form-label">Логин</label>
-                <input 
-                    type="text" 
-                    id="login" 
-                    name="login" 
-                    class="form-input" 
-                    placeholder="Введите логин"
-                    required
-                    autocomplete="username"
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="password" class="form-label">Пароль</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    class="form-input" 
-                    placeholder="Введите пароль"
-                    required
-                    autocomplete="current-password"
-                >
-            </div>
-
-            <div class="error-message" id="loginError"></div>
-
-            <button type="submit" class="btn btn-primary" id="submitBtn">
-                <span class="loading" id="loadingSpinner"></span>
-                Войти
-            </button>
-        </form>
-
-        <div class="links-section">
-            <p>Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
-        </div>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Вход - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/login.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="login-container">
+   <div class="logo-section">
+    <a class="home-link" href="index.html">
+     ← Вернуться на главную
+    </a>
+    <a class="logo" href="index.html">
+     <div class="logo-icon">
+      🌾
+     </div>
+     АгроЗаявки
+    </a>
+    <h1 class="page-title">
+     Вход в систему
+    </h1>
+    <p class="page-subtitle">
+     Войдите в свой аккаунт для продолжения работы
+    </p>
+   </div>
+   <div class="demo-info">
+    <h4>
+     Демо-аккаунты:
+    </h4>
+    <div class="demo-accounts">
+     <div class="demo-account">
+      <span>
+       admin / admin
+      </span>
+      <small>
+       (Администратор)
+      </small>
+     </div>
     </div>
-
-    <div class="notification" id="notification"></div>
-
-    <script>
-        // Система авторизации
-        class AuthSystem {
-            constructor() {
-                this.form = document.getElementById('loginForm');
-                this.initEventListeners();
-                this.createDefaultAdmin();
-            }
-
-            initEventListeners() {
-                this.form.addEventListener('submit', (e) => this.handleLogin(e));
-                
-                // Убираем ошибки при вводе
-                document.getElementById('login').addEventListener('input', () => this.hideError());
-                document.getElementById('password').addEventListener('input', () => this.hideError());
-            }
-
-            // Создание администратора по умолчанию
-            createDefaultAdmin() {
-                try {
-                    const users = JSON.parse(localStorage.getItem('users') || '[]');
-                    const hasAdmin = users.some(user => user.login === 'admin');
-                    
-                    if (!hasAdmin) {
-                        const adminUser = {
-                            id: 'admin_' + Date.now(),
-                            fullName: 'Администратор Системы',
-                            login: 'admin',
-                            phone: '79999999999',
-                            email: 'admin@agrozayavki.ru',
-                            password: this.hashPassword('admin'),
-                            role: 'admin',
-                            status: 'active',
-                            createdAt: new Date().toISOString(),
-                            updatedAt: new Date().toISOString()
-                        };
-
-                        users.push(adminUser);
-                        localStorage.setItem('users', JSON.stringify(users));
-                    }
-                } catch (error) {
-                    console.error('Ошибка создания администратора:', error);
-                }
-            }
-
-            // Обработка входа
-            async handleLogin(e) {
-                e.preventDefault();
-                
-                const submitBtn = document.getElementById('submitBtn');
-                const loadingSpinner = document.getElementById('loadingSpinner');
-                
-                // Показываем индикатор загрузки
-                submitBtn.disabled = true;
-                loadingSpinner.style.display = 'inline-block';
-                this.hideError();
-
-                try {
-                    const formData = new FormData(this.form);
-                    const login = formData.get('login').trim();
-                    const password = formData.get('password');
-
-                    // Валидация
-                    if (!login || !password) {
-                        this.showError('Заполните все поля');
-                        return;
-                    }
-
-                    // Имитация задержки сервера
-                    await new Promise(resolve => setTimeout(resolve, 800));
-
-                    // Проверка пользователя
-                    const user = this.authenticateUser(login, password);
-                    
-                    if (!user) {
-                        this.showError('Неверный логин или пароль');
-                        return;
-                    }
-
-                    if (user.status !== 'active') {
-                        this.showError('Аккаунт заблокирован. Обратитесь к администратору');
-                        return;
-                    }
-
-                    // Сохраняем сессию
-                    this.createSession(user);
-                    
-                    this.showNotification('Вход выполнен успешно! Перенаправление...', 'success');
-                    
-                    // Перенаправление в зависимости от роли
-                    setTimeout(() => {
-                        this.redirectToDashboard(user.role);
-                    }, 1500);
-
-                } catch (error) {
-                    this.showError('Произошла ошибка при входе. Попробуйте еще раз');
-                    console.error('Login error:', error);
-                } finally {
-                    submitBtn.disabled = false;
-                    loadingSpinner.style.display = 'none';
-                }
-            }
-
-            // Аутентификация пользователя
-            authenticateUser(login, password) {
-                try {
-                    const users = JSON.parse(localStorage.getItem('users') || '[]');
-                    const hashedPassword = this.hashPassword(password);
-                    
-                    return users.find(user => 
-                        user.login === login && user.password === hashedPassword
-                    );
-                } catch (error) {
-                    console.error('Authentication error:', error);
-                    return null;
-                }
-            }
-
-            // Создание сессии
-            createSession(user) {
-                const session = {
-                    userId: user.id,
-                    login: user.login,
-                    fullName: user.fullName,
-                    role: user.role,
-                    loginTime: new Date().toISOString(),
-                    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 часа
-                };
-
-                localStorage.setItem('currentSession', JSON.stringify(session));
-                sessionStorage.setItem('isLoggedIn', 'true');
-            }
-
-            // Перенаправление на дашборд
-            redirectToDashboard(role) {
-                const dashboardPages = {
-                    'user': 'dashboard-user.html',
-                    'manager': 'dashboard-manager.html', 
-                    'admin': 'dashboard-admin.html'
-                };
-
-                const targetPage = dashboardPages[role] || 'dashboard-user.html';
-                window.location.href = targetPage;
-            }
-
-            // Простое хеширование пароля (как в регистрации)
-            hashPassword(password) {
-                let hash = 0;
-                for (let i = 0; i < password.length; i++) {
-                    const char = password.charCodeAt(i);
-                    hash = ((hash << 5) - hash) + char;
-                    hash = hash & hash;
-                }
-                return 'hashed_' + Math.abs(hash).toString(36);
-            }
-
-            // Показ ошибки
-            showError(message) {
-                const errorElement = document.getElementById('loginError');
-                errorElement.textContent = message;
-                errorElement.classList.add('show');
-                
-                // Подсвечиваем поля
-                document.getElementById('login').classList.add('error');
-                document.getElementById('password').classList.add('error');
-            }
-
-            // Скрытие ошибки
-            hideError() {
-                const errorElement = document.getElementById('loginError');
-                errorElement.classList.remove('show');
-                
-                // Убираем подсветку
-                document.getElementById('login').classList.remove('error');
-                document.getElementById('password').classList.remove('error');
-            }
-
-            // Показ уведомлений
-            showNotification(message, type = 'success') {
-                const notification = document.getElementById('notification');
-                notification.textContent = message;
-                notification.className = `notification ${type}`;
-                notification.classList.add('show');
-
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 4000);
-            }
-        }
-
-        // Проверка сессии при загрузке
-        function checkExistingSession() {
-            try {
-                const session = JSON.parse(localStorage.getItem('currentSession') || 'null');
-                
-                if (session && new Date(session.expiresAt) > new Date()) {
-                    // Сессия действительна, перенаправляем
-                    const dashboardPages = {
-                        'user': 'dashboard-user.html',
-                        'manager': 'dashboard-manager.html', 
-                        'admin': 'dashboard-admin.html'
-                    };
-                    
-                    const targetPage = dashboardPages[session.role] || 'dashboard-user.html';
-                    window.location.href = targetPage;
-                    return true;
-                }
-            } catch (error) {
-                // Очищаем поврежденную сессию
-                localStorage.removeItem('currentSession');
-                sessionStorage.removeItem('isLoggedIn');
-            }
-            
-            return false;
-        }
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', () => {
-            // Проверяем существующую сессию
-            if (!checkExistingSession()) {
-                // Если сессии нет, инициализируем систему авторизации
-                new AuthSystem();
-            }
-        });
-
-        // Автозаполнение демо-аккаунтов
-        document.querySelectorAll('.demo-account').forEach(account => {
-            account.addEventListener('click', () => {
-                const credentials = account.querySelector('span').textContent.split(' / ');
-                document.getElementById('login').value = credentials[0];
-                document.getElementById('password').value = credentials[1];
-            });
-        });
-    </script>
-</body>
+    <small>
+     Или зарегистрируйте новый аккаунт
+    </small>
+   </div>
+   <form id="loginForm">
+    <div class="form-group">
+     <label class="form-label" for="login">
+      Логин
+     </label>
+     <input autocomplete="username" class="form-input" id="login" name="login" placeholder="Введите логин" required="" type="text"/>
+    </div>
+    <div class="form-group">
+     <label class="form-label" for="password">
+      Пароль
+     </label>
+     <input autocomplete="current-password" class="form-input" id="password" name="password" placeholder="Введите пароль" required="" type="password"/>
+    </div>
+    <div class="error-message" id="loginError">
+    </div>
+    <button class="btn btn-primary" id="submitBtn" type="submit">
+     <span class="loading" id="loadingSpinner">
+     </span>
+     Войти
+    </button>
+   </form>
+   <div class="links-section">
+    <p>
+     Нет аккаунта?
+     <a href="register.html">
+      Зарегистрироваться
+     </a>
+    </p>
+   </div>
+  </div>
+  <div class="notification" id="notification">
+  </div>
+  <script src="js/common.js">
+  </script>
+  <script src="js/login.js">
+  </script>
+ </body>
 </html>

@@ -1,951 +1,151 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация - АгроЗаявки</title>
-    <style>
-        :root {
-            --primary-color: #2E7D32;
-            --secondary-color: #FFA726;
-            --background-color: #F5F5F5;
-            --text-color: #212121;
-            --error-color: #D32F2F;
-            --success-color: #388E3C;
-            --white: #FFFFFF;
-            --gray-light: #E0E0E0;
-            --gray-medium: #9E9E9E;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
-            --border-radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            background: linear-gradient(135deg, var(--primary-color), #4CAF50);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .register-container {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 500px;
-            padding: 2rem;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            text-decoration: none;
-            margin-bottom: 0.5rem;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--secondary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: var(--white);
-        }
-
-        .page-title {
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .page-subtitle {
-            color: var(--gray-medium);
-            font-size: 0.9rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .form-label.required::after {
-            content: ' *';
-            color: var(--error-color);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-            outline: none;
-        }
-
-        .form-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
-
-        .form-input.error {
-            border-color: var(--error-color);
-        }
-
-        .form-input.success {
-            border-color: var(--success-color);
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            background: var(--white);
-            cursor: pointer;
-            transition: var(--transition);
-            outline: none;
-        }
-
-        .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
-
-        .error-message {
-            color: var(--error-color);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-            min-height: 1.2rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .error-message.show {
-            opacity: 1;
-        }
-
-        .success-message {
-            color: var(--success-color);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-            min-height: 1.2rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .success-message.show {
-            opacity: 1;
-        }
-
-        .additional-fields {
-            border: 2px dashed var(--gray-light);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-top: 1rem;
-            background: rgba(46, 125, 50, 0.05);
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .additional-fields.show {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .additional-fields h4 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            font-size: 1rem;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 0.875rem;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: #1B5E20;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-        }
-
-        .btn:disabled {
-            background: var(--gray-medium);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .links-section {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--gray-light);
-        }
-
-        .links-section a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .links-section a:hover {
-            color: var(--secondary-color);
-        }
-
-        .home-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            color: var(--gray-medium);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: var(--transition);
-        }
-
-        .home-link:hover {
-            color: var(--primary-color);
-        }
-
-        .loading {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid var(--white);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 0.5rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .notification {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            color: var(--white);
-            font-weight: 500;
-            box-shadow: var(--shadow);
-            z-index: 1000;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
-        }
-
-        .notification.success {
-            background: var(--success-color);
-        }
-
-        .notification.error {
-            background: var(--error-color);
-        }
-
-        .notification.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        @media (max-width: 480px) {
-            .register-container {
-                padding: 1.5rem;
-                margin: 0.5rem;
-            }
-            
-            .notification {
-                top: 1rem;
-                right: 1rem;
-                left: 1rem;
-                transform: translateY(-100%);
-            }
-            
-            .notification.show {
-                transform: translateY(0);
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="register-container">
-        <div class="logo-section">
-            <a href="index.html" class="home-link">
-                ← Вернуться на главную
-            </a>
-            <a href="index.html" class="logo">
-                <div class="logo-icon">🌾</div>
-                АгроЗаявки
-            </a>
-            <h1 class="page-title">Регистрация</h1>
-            <p class="page-subtitle">Создайте аккаунт для работы с системой</p>
-        </div>
-
-        <form id="registerForm" novalidate>
-            <div class="form-group">
-                <label for="fullName" class="form-label required">ФИО</label>
-                <input 
-                    type="text" 
-                    id="fullName" 
-                    name="fullName" 
-                    class="form-input" 
-                    placeholder="Иванов Иван Иванович"
-                    required
-                >
-                <div class="error-message" id="fullNameError"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="login" class="form-label required">Логин</label>
-                <input 
-                    type="text" 
-                    id="login" 
-                    name="login" 
-                    class="form-input" 
-                    placeholder="user123"
-                    required
-                >
-                <div class="error-message" id="loginError"></div>
-                <div class="success-message" id="loginSuccess"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="phone" class="form-label required">Номер телефона</label>
-                <input 
-                    type="tel" 
-                    id="phone" 
-                    name="phone" 
-                    class="form-input" 
-                    placeholder="+7 (999) 123-45-67"
-                    required
-                >
-                <div class="error-message" id="phoneError"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="email" class="form-label required">Email</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    class="form-input" 
-                    placeholder="user@example.com"
-                    required
-                >
-                <div class="error-message" id="emailError"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="password" class="form-label required">Пароль</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    class="form-input" 
-                    placeholder="Введите пароль"
-                    required
-                >
-                <div class="error-message" id="passwordError"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="confirmPassword" class="form-label required">Подтверждение пароля</label>
-                <input 
-                    type="password" 
-                    id="confirmPassword" 
-                    name="confirmPassword" 
-                    class="form-input" 
-                    placeholder="Повторите пароль"
-                    required
-                >
-                <div class="error-message" id="confirmPasswordError"></div>
-            </div>
-
-            <div class="form-group">
-                <label for="role" class="form-label required">Статус</label>
-                <select id="role" name="role" class="form-select" required>
-                    <option value="">Выберите статус</option>
-                    <option value="user">Пользователь</option>
-                    <option value="manager">Менеджер</option>
-                </select>
-                <div class="error-message" id="roleError"></div>
-            </div>
-
-            <div class="additional-fields" id="managerFields">
-                <h4>Дополнительная информация для менеджера</h4>
-                
-                <div class="form-group">
-                    <label for="department" class="form-label required">Участок</label>
-                    <input 
-                        type="text" 
-                        id="department" 
-                        name="department" 
-                        class="form-input" 
-                        placeholder="Название участка"
-                    >
-                    <div class="error-message" id="departmentError"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="position" class="form-label required">Должность</label>
-                    <input 
-                        type="text" 
-                        id="position" 
-                        name="position" 
-                        class="form-input" 
-                        placeholder="Название должности"
-                    >
-                    <div class="error-message" id="positionError"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="positionCode" class="form-label required">Код должности</label>
-                    <input 
-                        type="text" 
-                        id="positionCode" 
-                        name="positionCode" 
-                        class="form-input" 
-                        placeholder="Например: MGR001"
-                    >
-                    <div class="error-message" id="positionCodeError"></div>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary" id="submitBtn">
-                <span class="loading" id="loadingSpinner"></span>
-                Зарегистрироваться
-            </button>
-        </form>
-
-        <div class="links-section">
-            <p>Уже есть аккаунт? <a href="login.html">Войти</a></p>
-        </div>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Регистрация - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/register.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="register-container">
+   <div class="logo-section">
+    <a class="home-link" href="index.html">
+     ← Вернуться на главную
+    </a>
+    <a class="logo" href="index.html">
+     <div class="logo-icon">
+      🌾
+     </div>
+     АгроЗаявки
+    </a>
+    <h1 class="page-title">
+     Регистрация
+    </h1>
+    <p class="page-subtitle">
+     Создайте аккаунт для работы с системой
+    </p>
+   </div>
+   <form id="registerForm" novalidate="">
+    <div class="form-group">
+     <label class="form-label required" for="fullName">
+      ФИО
+     </label>
+     <input class="form-input" id="fullName" name="fullName" placeholder="Иванов Иван Иванович" required="" type="text"/>
+     <div class="error-message" id="fullNameError">
+     </div>
     </div>
-
-    <div class="notification" id="notification"></div>
-
-    <script>
-        // Система валидации и регистрации
-        class RegistrationSystem {
-            constructor() {
-                this.form = document.getElementById('registerForm');
-                this.initEventListeners();
-                this.existingUsers = this.getExistingUsers();
-            }
-
-            initEventListeners() {
-                // Обработка отправки формы
-                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-
-                // Валидация в реальном времени
-                document.getElementById('fullName').addEventListener('input', (e) => this.validateFullName(e.target));
-                document.getElementById('login').addEventListener('input', (e) => this.validateLogin(e.target));
-                document.getElementById('phone').addEventListener('input', (e) => this.validatePhone(e.target));
-                document.getElementById('email').addEventListener('input', (e) => this.validateEmail(e.target));
-                document.getElementById('password').addEventListener('input', (e) => this.validatePassword(e.target));
-                document.getElementById('confirmPassword').addEventListener('input', (e) => this.validateConfirmPassword(e.target));
-                document.getElementById('role').addEventListener('change', (e) => this.handleRoleChange(e.target));
-
-                // Дополнительные поля для менеджера
-                document.getElementById('department').addEventListener('input', (e) => this.validateDepartment(e.target));
-                document.getElementById('position').addEventListener('input', (e) => this.validatePosition(e.target));
-                document.getElementById('positionCode').addEventListener('input', (e) => this.validatePositionCode(e.target));
-
-                // Маска для телефона
-                document.getElementById('phone').addEventListener('input', (e) => this.formatPhone(e.target));
-            }
-
-            getExistingUsers() {
-                try {
-                    return JSON.parse(localStorage.getItem('users') || '[]');
-                } catch {
-                    return [];
-                }
-            }
-
-            // Валидация ФИО
-            validateFullName(input) {
-                const value = input.value.trim();
-                const regex = /^[а-яёА-ЯЁ\s\-]+$/;
-                
-                if (!value) {
-                    this.showError('fullNameError', 'ФИО обязательно для заполнения');
-                    input.classList.add('error');
-                    return false;
-                }
-                
-                if (!regex.test(value)) {
-                    this.showError('fullNameError', 'ФИО должно содержать только кириллицу, дефис и пробелы');
-                    input.classList.add('error');
-                    return false;
-                }
-
-                if (value.length < 2) {
-                    this.showError('fullNameError', 'ФИО слишком короткое');
-                    input.classList.add('error');
-                    return false;
-                }
-
-                this.hideError('fullNameError');
-                input.classList.remove('error');
-                input.classList.add('success');
-                return true;
-            }
-
-            // Валидация логина
-            async validateLogin(input) {
-                const value = input.value.trim();
-                const regex = /^[a-zA-Z\-]+$/;
-                
-                if (!value) {
-                    this.showError('loginError', 'Логин обязателен для заполнения');
-                    input.classList.add('error');
-                    return false;
-                }
-                
-                if (!regex.test(value)) {
-                    this.showError('loginError', 'Логин должен содержать только латинские буквы и дефис');
-                    input.classList.add('error');
-                    return false;
-                }
-
-                if (value.length < 3) {
-                    this.showError('loginError', 'Логин должен содержать не менее 3 символов');
-                    input.classList.add('error');
-                    return false;
-                }
-
-                // Проверка уникальности (имитация серверной проверки)
-                await new Promise(resolve => setTimeout(resolve, 300));
-                
-                const isUnique = !this.existingUsers.some(user => user.login === value);
-                
-                if (!isUnique) {
-                    this.showError('loginError', 'Этот логин уже занят');
-                    input.classList.add('error');
-                    return false;
-                }
-
-                this.hideError('loginError');
-                this.showSuccess('loginSuccess', 'Логин доступен');
-                input.classList.remove('error');
-                input.classList.add('success');
-                return true;
-            }
-
-            // Валидация телефона
-            validatePhone(input) {
-                const value = input.value.replace(/\D/g, '');
-                
-                if (!value) {
-                    this.showError('phoneError', 'Номер телефона обязателен для заполнения');
-                    input.classList.add('error');
-                    return false;
-                }
-                
-                if (value.length !== 11) {
-                    this.showError('phoneError', 'Номер телефона должен содержать 11 цифр');
-                    input.classList.add('error');
-                    return false;
-                }
-
-                this.hideError('phoneError');
-                input.classList.remove('error');
-                input.classList.add('success');
-                return true;
-            }
-
-            // Форматирование телефона
-            formatPhone(input) {
-                let value = input.value.replace(/\D/g, '');
-                
-                if (value.startsWith('8')) {
-                    value = '7' + value.slice(1);
-                }
-                
-                if (value.startsWith('7')) {
-                    value = value.slice(0, 11);
-                    const formatted = value.replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '+$1 ($2) $3-$4-$5');
-                    input.value = formatted;
-                } else if (value.length > 0) {
-                    input.value = '+7 (' + value.slice(0, 3) + ') ' + value.slice(3, 6) + '-' + value.slice(6, 8) + '-' + value.slice(8, 10);
-                }
-            }
-
-            // Валидация email
-            validateEmail(input) {
-                const value = input.value.trim();
-                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                
-                if (!value) {
-                    this.showError('emailError', 'Email обязателен для заполнения');
-                    input.classList.add('error');
-                    return false;
-                }
-                
-                if (!regex.test(value)) {
-                    this.showError('emailError', 'Введите корректный email адрес');
-                    input.classList.add('error');
-                    return false;
-                }
-
-                this.hideError('emailError');
-                input.classList.remove('error');
-                input.classList.add('success');
-                return true;
-            }
-
-            // Валидация пароля
-            validatePassword(input) {
-                const value = input.value;
-                
-                if (!value) {
-                    this.showError('passwordError', 'Пароль обязателен для заполнения');
-                    input.classList.add('error');
-                    return false;
-                }
-                
-                if (value.length < 6) {
-                    this.showError('passwordError', 'Пароль должен содержать не менее 6 символов');
-                    input.classList.add('error');
-                    return false;
-                }
-
-                this.hideError('passwordError');
-                input.classList.remove('error');
-                input.classList.add('success');
-                
-                // Перепроверяем подтверждение пароля
-                const confirmInput = document.getElementById('confirmPassword');
-                if (confirmInput.value) {
-                    this.validateConfirmPassword(confirmInput);
-                }
-                
-                return true;
-            }
-
-            // Валидация подтверждения пароля
-            validateConfirmPassword(input) {
-                const value = input.value;
-                const password = document.getElementById('password').value;
-                
-                if (!value) {
-                    this.showError('confirmPasswordError', 'Подтверждение пароля обязательно');
-                    input.classList.add('error');
-                    return false;
-                }
-                
-                if (value !== password) {
-                    this.showError('confirmPasswordError', 'Пароли не совпадают');
-                    input.classList.add('error');
-                    return false;
-                }
-
-                this.hideError('confirmPasswordError');
-                input.classList.remove('error');
-                input.classList.add('success');
-                return true;
-            }
-
-            // Обработка смены роли
-            handleRoleChange(select) {
-                const managerFields = document.getElementById('managerFields');
-                
-                if (select.value === 'manager') {
-                    managerFields.classList.add('show');
-                    // Делаем поля обязательными
-                    ['department', 'position', 'positionCode'].forEach(id => {
-                        document.getElementById(id).required = true;
-                    });
-                } else {
-                    managerFields.classList.remove('show');
-                    // Убираем обязательность
-                    ['department', 'position', 'positionCode'].forEach(id => {
-                        const input = document.getElementById(id);
-                        input.required = false;
-                        input.value = '';
-                        input.classList.remove('error', 'success');
-                        this.hideError(id + 'Error');
-                    });
-                }
-            }
-
-            // Валидация дополнительных полей
-            validateDepartment(input) {
-                return this.validateRequiredText(input, 'departmentError', 'Участок обязателен для заполнения');
-            }
-
-            validatePosition(input) {
-                return this.validateRequiredText(input, 'positionError', 'Должность обязательна для заполнения');
-            }
-
-            validatePositionCode(input) {
-                return this.validateRequiredText(input, 'positionCodeError', 'Код должности обязателен для заполнения');
-            }
-
-            validateRequiredText(input, errorId, message) {
-                const value = input.value.trim();
-                
-                if (!value) {
-                    this.showError(errorId, message);
-                    input.classList.add('error');
-                    return false;
-                }
-
-                this.hideError(errorId);
-                input.classList.remove('error');
-                input.classList.add('success');
-                return true;
-            }
-
-            // Обработка отправки формы
-            async handleSubmit(e) {
-                e.preventDefault();
-                
-                const submitBtn = document.getElementById('submitBtn');
-                const loadingSpinner = document.getElementById('loadingSpinner');
-                
-                // Показываем индикатор загрузки
-                submitBtn.disabled = true;
-                loadingSpinner.style.display = 'inline-block';
-
-                try {
-                    // Валидация всех полей
-                    const isValid = await this.validateAllFields();
-                    
-                    if (!isValid) {
-                        this.showNotification('Пожалуйста, исправьте ошибки в форме', 'error');
-                        return;
-                    }
-
-                    // Имитация задержки отправки
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-
-                    // Сохранение пользователя
-                    this.saveUser();
-                    
-                    this.showNotification('Регистрация прошла успешно! Перенаправление...', 'success');
-                    
-                    // Перенаправление на страницу входа
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
-
-                } catch (error) {
-                    this.showNotification('Произошла ошибка при регистрации', 'error');
-                } finally {
-                    submitBtn.disabled = false;
-                    loadingSpinner.style.display = 'none';
-                }
-            }
-
-            // Валидация всех полей
-            async validateAllFields() {
-                const fields = [
-                    () => this.validateFullName(document.getElementById('fullName')),
-                    () => this.validateLogin(document.getElementById('login')),
-                    () => this.validatePhone(document.getElementById('phone')),
-                    () => this.validateEmail(document.getElementById('email')),
-                    () => this.validatePassword(document.getElementById('password')),
-                    () => this.validateConfirmPassword(document.getElementById('confirmPassword'))
-                ];
-
-                const role = document.getElementById('role').value;
-                if (!role) {
-                    this.showError('roleError', 'Выберите статус');
-                    return false;
-                }
-                this.hideError('roleError');
-
-                // Дополнительные поля для менеджера
-                if (role === 'manager') {
-                    fields.push(
-                        () => this.validateDepartment(document.getElementById('department')),
-                        () => this.validatePosition(document.getElementById('position')),
-                        () => this.validatePositionCode(document.getElementById('positionCode'))
-                    );
-                }
-
-                // Выполняем все проверки
-                const results = await Promise.all(fields.map(fn => fn()));
-                return results.every(result => result);
-            }
-
-            // Сохранение пользователя
-            saveUser() {
-                const formData = new FormData(this.form);
-                const userData = {
-                    id: this.generateId(),
-                    fullName: formData.get('fullName').trim(),
-                    login: formData.get('login').trim(),
-                    phone: formData.get('phone').replace(/\D/g, ''),
-                    email: formData.get('email').trim(),
-                    password: this.hashPassword(formData.get('password')),
-                    role: formData.get('role'),
-                    status: 'active',
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                };
-
-                // Дополнительные поля для менеджера
-                if (userData.role === 'manager') {
-                    userData.additionalFields = {
-                        department: formData.get('department').trim(),
-                        position: formData.get('position').trim(),
-                        positionCode: formData.get('positionCode').trim()
-                    };
-                }
-
-                // Сохраняем в localStorage
-                this.existingUsers.push(userData);
-                localStorage.setItem('users', JSON.stringify(this.existingUsers));
-
-                // Создаем администратора по умолчанию, если его нет
-                this.createDefaultAdmin();
-            }
-
-            // Создание администратора по умолчанию
-            createDefaultAdmin() {
-                const hasAdmin = this.existingUsers.some(user => user.login === 'admin');
-                
-                if (!hasAdmin) {
-                    const adminUser = {
-                        id: this.generateId(),
-                        fullName: 'Администратор Системы',
-                        login: 'admin',
-                        phone: '79999999999',
-                        email: 'admin@agrozayavki.ru',
-                        password: this.hashPassword('admin'),
-                        role: 'admin',
-                        status: 'active',
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString()
-                    };
-
-                    this.existingUsers.push(adminUser);
-                    localStorage.setItem('users', JSON.stringify(this.existingUsers));
-                }
-            }
-
-            // Генерация ID
-            generateId() {
-                return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
-
-            // Простое хеширование пароля
-            hashPassword(password) {
-                // В реальном приложении использовать bcrypt
-                let hash = 0;
-                for (let i = 0; i < password.length; i++) {
-                    const char = password.charCodeAt(i);
-                    hash = ((hash << 5) - hash) + char;
-                    hash = hash & hash;
-                }
-                return 'hashed_' + Math.abs(hash).toString(36);
-            }
-
-            // Утилиты для работы с сообщениями
-            showError(elementId, message) {
-                const element = document.getElementById(elementId);
-                element.textContent = message;
-                element.classList.add('show');
-            }
-
-            hideError(elementId) {
-                const element = document.getElementById(elementId);
-                element.textContent = '';
-                element.classList.remove('show');
-            }
-
-            showSuccess(elementId, message) {
-                const element = document.getElementById(elementId);
-                element.textContent = message;
-                element.classList.add('show');
-            }
-
-            showNotification(message, type = 'success') {
-                const notification = document.getElementById('notification');
-                notification.textContent = message;
-                notification.className = `notification ${type}`;
-                notification.classList.add('show');
-
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 5000);
-            }
-        }
-
-        // Инициализация системы регистрации
-        document.addEventListener('DOMContentLoaded', () => {
-            new RegistrationSystem();
-        });
-    </script>
-</body>
+    <div class="form-group">
+     <label class="form-label required" for="login">
+      Логин
+     </label>
+     <input class="form-input" id="login" name="login" placeholder="user123" required="" type="text"/>
+     <div class="error-message" id="loginError">
+     </div>
+     <div class="success-message" id="loginSuccess">
+     </div>
+    </div>
+    <div class="form-group">
+     <label class="form-label required" for="phone">
+      Номер телефона
+     </label>
+     <input class="form-input" id="phone" name="phone" placeholder="+7 (999) 123-45-67" required="" type="tel"/>
+     <div class="error-message" id="phoneError">
+     </div>
+    </div>
+    <div class="form-group">
+     <label class="form-label required" for="email">
+      Email
+     </label>
+     <input class="form-input" id="email" name="email" placeholder="user@example.com" required="" type="email"/>
+     <div class="error-message" id="emailError">
+     </div>
+    </div>
+    <div class="form-group">
+     <label class="form-label required" for="password">
+      Пароль
+     </label>
+     <input class="form-input" id="password" name="password" placeholder="Введите пароль" required="" type="password"/>
+     <div class="error-message" id="passwordError">
+     </div>
+    </div>
+    <div class="form-group">
+     <label class="form-label required" for="confirmPassword">
+      Подтверждение пароля
+     </label>
+     <input class="form-input" id="confirmPassword" name="confirmPassword" placeholder="Повторите пароль" required="" type="password"/>
+     <div class="error-message" id="confirmPasswordError">
+     </div>
+    </div>
+    <div class="form-group">
+     <label class="form-label required" for="role">
+      Статус
+     </label>
+     <select class="form-select" id="role" name="role" required="">
+      <option value="">
+       Выберите статус
+      </option>
+      <option value="user">
+       Пользователь
+      </option>
+      <option value="manager">
+       Менеджер
+      </option>
+     </select>
+     <div class="error-message" id="roleError">
+     </div>
+    </div>
+    <div class="additional-fields" id="managerFields">
+     <h4>
+      Дополнительная информация для менеджера
+     </h4>
+     <div class="form-group">
+      <label class="form-label required" for="department">
+       Участок
+      </label>
+      <input class="form-input" id="department" name="department" placeholder="Название участка" type="text"/>
+      <div class="error-message" id="departmentError">
+      </div>
+     </div>
+     <div class="form-group">
+      <label class="form-label required" for="position">
+       Должность
+      </label>
+      <input class="form-input" id="position" name="position" placeholder="Название должности" type="text"/>
+      <div class="error-message" id="positionError">
+      </div>
+     </div>
+     <div class="form-group">
+      <label class="form-label required" for="positionCode">
+       Код должности
+      </label>
+      <input class="form-input" id="positionCode" name="positionCode" placeholder="Например: MGR001" type="text"/>
+      <div class="error-message" id="positionCodeError">
+      </div>
+     </div>
+    </div>
+    <button class="btn btn-primary" id="submitBtn" type="submit">
+     <span class="loading" id="loadingSpinner">
+     </span>
+     Зарегистрироваться
+    </button>
+   </form>
+   <div class="links-section">
+    <p>
+     Уже есть аккаунт?
+     <a href="login.html">
+      Войти
+     </a>
+    </p>
+   </div>
+  </div>
+  <div class="notification" id="notification">
+  </div>
+  <script src="js/common.js">
+  </script>
+  <script src="js/register.js">
+  </script>
+ </body>
 </html>

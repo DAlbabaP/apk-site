@@ -1,1117 +1,339 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Личный кабинет - АгроЗаявки</title>
-    <style>
-        :root {
-            --primary-color: #2E7D32;
-            --secondary-color: #FFA726;
-            --background-color: #F5F5F5;
-            --text-color: #212121;
-            --error-color: #D32F2F;
-            --success-color: #388E3C;
-            --white: #FFFFFF;
-            --gray-light: #E0E0E0;
-            --gray-medium: #9E9E9E;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
-            --border-radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), #4CAF50);
-            color: var(--white);
-            padding: 1rem 0;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: var(--white);
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--secondary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--secondary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .user-details h3 {
-            margin: 0;
-            font-size: 1rem;
-        }
-
-        .user-details p {
-            margin: 0;
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: var(--white);
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Main layout */
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 2rem;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 1.5rem;
-            height: fit-content;
-            position: sticky;
-            top: 100px;
-        }
-
-        .sidebar h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--gray-light);
-        }
-
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-menu li {
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-menu a {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            color: var(--text-color);
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-
-        .nav-menu a:hover,
-        .nav-menu a.active {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-
-        .nav-menu .icon {
-            font-size: 1.2rem;
-            width: 20px;
-        }
-
-        /* Content area */
-        .content {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .content-header {
-            background: linear-gradient(135deg, var(--primary-color), #4CAF50);
-            color: var(--white);
-            padding: 2rem;
-        }
-
-        .content-header h2 {
-            margin-bottom: 0.5rem;
-            font-size: 1.8rem;
-        }
-
-        .content-header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-
-        .content-body {
-            padding: 2rem;
-        }
-
-        /* Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--white);
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .stat-card:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--gray-medium);
-            font-size: 0.9rem;
-        }
-
-        /* Quick actions */
-        .quick-actions {
-            margin-bottom: 2rem;
-        }
-
-        .quick-actions h3 {
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .action-card {
-            background: var(--white);
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            color: var(--text-color);
-        }
-
-        .action-card:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.15);
-            text-decoration: none;
-            color: var(--text-color);
-        }
-
-        .action-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--secondary-color);
-        }
-
-        .action-card h4 {
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-        }
-
-        /* Recent requests */
-        .recent-requests {
-            margin-top: 2rem;
-        }
-
-        .recent-requests h3 {
-            margin-bottom: 1rem;
-            color: var(--primary-color);
-        }
-
-        .requests-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--white);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .requests-table th,
-        .requests-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--gray-light);
-        }
-
-        .requests-table th {
-            background: var(--primary-color);
-            color: var(--white);
-            font-weight: 600;
-        }
-
-        .requests-table tr:hover {
-            background: rgba(46, 125, 50, 0.05);
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        .status-new {
-            background: #E3F2FD;
-            color: #1976D2;
-        }
-
-        .status-in-progress {
-            background: #FFF3E0;
-            color: #F57C00;
-        }
-
-        .status-completed {
-            background: #E8F5E8;
-            color: #2E7D32;
-        }
-
-        .status-rejected {
-            background: #FFEBEE;
-            color: #D32F2F;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            transition: var(--transition);
-            text-align: center;
-            justify-content: center;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background: #1B5E20;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-        }
-
-        .btn-secondary {
-            background: var(--secondary-color);
-            color: var(--white);
-        }
-
-        .btn-secondary:hover {
-            background: #FF9800;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray-medium);
-        }
-
-        .empty-state .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-container {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-                padding: 1rem;
-            }
-
-            .sidebar {
-                position: static;
-                order: 2;
-            }
-
-            .nav-container {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .requests-table {
-                font-size: 0.9rem;
-            }
-
-            .requests-table th,
-            .requests-table td {
-                padding: 0.75rem 0.5rem;
-            }
-        }
-
-        /* Page transitions */
-        .page-section {
-            display: none;
-        }
-
-        .page-section.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Form styles for profile editing */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-            outline: none;
-        }
-
-        .form-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
-
-        .form-input:disabled {
-            background: var(--gray-light);
-            cursor: not-allowed;
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-icon">🌾</div>
-                АгроЗаявки
-            </a>
-            
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">П</div>
-                <div class="user-details">
-                    <h3 id="userName">Пользователь</h3>
-                    <p id="userRole">Пользователь</p>
-                </div>
-                <button class="logout-btn" onclick="logout()">Выйти</button>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Main container -->
-    <div class="main-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <h3>Навигация</h3>
-            <ul class="nav-menu">
-                <li><a href="#" class="nav-link active" data-page="dashboard">
-                    <span class="icon">🏠</span>Главная
-                </a></li>
-                <li><a href="#" class="nav-link" data-page="profile">
-                    <span class="icon">👤</span>Личные данные
-                </a></li>
-                <li><a href="#" class="nav-link" data-page="requests">
-                    <span class="icon">📝</span>Мои заявки
-                </a></li>
-                <li><a href="#" class="nav-link" data-page="create-request">
-                    <span class="icon">➕</span>Создать заявку
-                </a></li>
-            </ul>
-        </aside>
-
-        <!-- Content area -->
-        <main class="content">
-            <!-- Dashboard section -->
-            <section id="dashboard" class="page-section active">
-                <div class="content-header">
-                    <h2>Добро пожаловать!</h2>
-                    <p>Управляйте своими заявками и отслеживайте их статус</p>
-                </div>
-                
-                <div class="content-body">
-                    <!-- Statistics -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalRequests">0</div>
-                            <div class="stat-label">Всего заявок</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="pendingRequests">0</div>
-                            <div class="stat-label">В обработке</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="completedRequests">0</div>
-                            <div class="stat-label">Выполнено</div>
-                        </div>
-                    </div>
-
-                    <!-- Quick actions -->
-                    <div class="quick-actions">
-                        <h3>Быстрые действия</h3>
-                        <div class="actions-grid">
-                            <a href="#" class="action-card" data-page="create-request">
-                                <div class="action-icon">📝</div>
-                                <h4>Создать заявку</h4>
-                                <p>Подать новую заявку в систему</p>
-                            </a>
-                            <a href="#" class="action-card" data-page="requests">
-                                <div class="action-icon">📊</div>
-                                <h4>Мои заявки</h4>
-                                <p>Просмотреть все заявки и их статус</p>
-                            </a>
-                            <a href="#" class="action-card" data-page="profile">
-                                <div class="action-icon">⚙️</div>
-                                <h4>Настройки</h4>
-                                <p>Редактировать личные данные</p>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Recent requests -->
-                    <div class="recent-requests">
-                        <h3>Последние заявки</h3>
-                        <div id="recentRequestsContainer">
-                            <div class="empty-state">
-                                <div class="icon">📭</div>
-                                <h4>Заявок пока нет</h4>
-                                <p>Создайте первую заявку, чтобы начать работу</p>
-                                <a href="#" class="btn btn-primary" data-page="create-request">Создать заявку</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Profile section -->
-            <section id="profile" class="page-section">
-                <div class="content-header">
-                    <h2>Личные данные</h2>
-                    <p>Управление информацией профиля</p>
-                </div>
-                
-                <div class="content-body">
-                    <form id="profileForm">
-                        <div class="form-group">
-                            <label for="profileFullName" class="form-label">ФИО</label>
-                            <input type="text" id="profileFullName" class="form-input" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profileLogin" class="form-label">Логин</label>
-                            <input type="text" id="profileLogin" class="form-input" disabled>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profilePhone" class="form-label">Телефон</label>
-                            <input type="tel" id="profilePhone" class="form-input" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profileEmail" class="form-label">Email</label>
-                            <input type="email" id="profileEmail" class="form-input" required>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Requests section -->
-            <section id="requests" class="page-section">
-                <div class="content-header">
-                    <h2>Мои заявки</h2>
-                    <p>Просмотр и управление заявками</p>
-                </div>
-                
-                <div class="content-body">
-                    <div id="requestsContainer">
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <h4>У вас пока нет заявок</h4>
-                            <p>Создайте первую заявку для начала работы</p>
-                            <a href="#" class="btn btn-primary" data-page="create-request">Создать заявку</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Create request section -->
-            <section id="create-request" class="page-section">
-                <div class="content-header">
-                    <h2>Создание заявки</h2>
-                    <p>Заполните форму для подачи новой заявки</p>
-                </div>
-                
-                <div class="content-body">
-                    <form id="createRequestForm">
-                        <div class="form-group">
-                            <label for="requestTitle" class="form-label">Заголовок заявки</label>
-                            <input type="text" id="requestTitle" class="form-input" placeholder="Краткое описание проблемы" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="requestCategory" class="form-label">Категория</label>
-                            <select id="requestCategory" class="form-input" required>
-                                <option value="">Выберите категорию</option>
-                                <option value="maintenance">Техническое обслуживание</option>
-                                <option value="repair">Ремонт оборудования</option>
-                                <option value="supply">Поставка материалов</option>
-                                <option value="consultation">Консультация</option>
-                                <option value="other">Другое</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="requestPriority" class="form-label">Приоритет</label>
-                            <select id="requestPriority" class="form-input" required>
-                                <option value="">Выберите приоритет</option>
-                                <option value="low">Низкий</option>
-                                <option value="medium">Средний</option>
-                                <option value="high">Высокий</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="requestDescription" class="form-label">Подробное описание</label>
-                            <textarea id="requestDescription" class="form-input" rows="5" placeholder="Опишите проблему подробно..." required></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Создать заявку</button>
-                    </form>
-                </div>
-            </section>
-        </main>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Личный кабинет - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/dashboard-user.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <!-- Header -->
+  <header class="header">
+   <nav class="nav-container">
+    <a class="logo" href="index.html">
+     <div class="logo-icon">
+      🌾
+     </div>
+     АгроЗаявки
+    </a>
+    <div class="user-info">
+     <div class="user-avatar" id="userAvatar">
+      П
+     </div>
+     <div class="user-details">
+      <h3 id="userName">
+       Пользователь
+      </h3>
+      <p id="userRole">
+       Пользователь
+      </p>
+     </div>
+     <button class="logout-btn" onclick="logout()">
+      Выйти
+     </button>
     </div>
-
-    <script>
-        // Система управления дашбордом пользователя
-        class UserDashboard {
-            constructor() {
-                this.currentUser = null;
-                this.userRequests = [];
-                this.init();
-            }
-
-            init() {
-                this.checkAuth();
-                this.loadUserData();
-                this.loadUserRequests();
-                this.updateStats();
-                this.initNavigation();
-                this.initForms();
-                this.renderRecentRequests();
-            }
-
-            // Проверка авторизации
-            checkAuth() {
-                try {
-                    const session = JSON.parse(localStorage.getItem('currentSession') || 'null');
-                    
-                    if (!session || new Date(session.expiresAt) <= new Date()) {
-                        window.location.href = 'login.html';
-                        return;
-                    }
-
-                    if (session.role !== 'user') {
-                        // Перенаправляем на соответствующий дашборд
-                        const dashboards = {
-                            'manager': 'dashboard-manager.html',
-                            'admin': 'dashboard-admin.html'
-                        };
-                        if (dashboards[session.role]) {
-                            window.location.href = dashboards[session.role];
-                        }
-                        return;
-                    }
-
-                    this.currentUser = session;
-                } catch (error) {
-                    window.location.href = 'login.html';
-                }
-            }
-
-            // Загрузка данных пользователя
-            loadUserData() {
-                if (!this.currentUser) return;
-
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const user = users.find(u => u.id === this.currentUser.userId);
-                
-                if (user) {
-                    // Обновляем информацию в шапке
-                    document.getElementById('userName').textContent = user.fullName;
-                    document.getElementById('userRole').textContent = 'Пользователь';
-                    document.getElementById('userAvatar').textContent = user.fullName.charAt(0).toUpperCase();
-
-                    // Заполняем форму профиля
-                    document.getElementById('profileFullName').value = user.fullName;
-                    document.getElementById('profileLogin').value = user.login;
-                    document.getElementById('profilePhone').value = user.phone;
-                    document.getElementById('profileEmail').value = user.email;
-                }
-            }
-
-            // Загрузка заявок пользователя
-            loadUserRequests() {
-                try {
-                    const allRequests = JSON.parse(localStorage.getItem('requests') || '[]');
-                    this.userRequests = allRequests.filter(req => req.userId === this.currentUser.userId);
-                } catch (error) {
-                    this.userRequests = [];
-                }
-            }
-
-            // Обновление статистики
-            updateStats() {
-                const total = this.userRequests.length;
-                const pending = this.userRequests.filter(req => 
-                    ['new', 'in_progress'].includes(req.status)
-                ).length;
-                const completed = this.userRequests.filter(req => 
-                    req.status === 'completed'
-                ).length;
-
-                document.getElementById('totalRequests').textContent = total;
-                document.getElementById('pendingRequests').textContent = pending;
-                document.getElementById('completedRequests').textContent = completed;
-            }
-
-            // Инициализация навигации
-            initNavigation() {
-                document.querySelectorAll('.nav-link, .action-card, [data-page]').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const page = link.getAttribute('data-page');
-                        if (page) {
-                            this.showPage(page);
-                        }
-                    });
-                });
-            }
-
-            // Показ страницы
-            showPage(pageId) {
-                // Скрываем все страницы
-                document.querySelectorAll('.page-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-
-                // Показываем нужную страницу
-                const targetPage = document.getElementById(pageId);
-                if (targetPage) {
-                    targetPage.classList.add('active');
-                }
-
-                // Обновляем активную ссылку
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active');
-                });
-
-                const activeLink = document.querySelector(`[data-page="${pageId}"]`);
-                if (activeLink && activeLink.classList.contains('nav-link')) {
-                    activeLink.classList.add('active');
-                }
-
-                // Обновляем контент страницы
-                if (pageId === 'requests') {
-                    this.renderAllRequests();
-                }
-            }
-
-            // Инициализация форм
-            initForms() {
-                // Форма профиля
-                document.getElementById('profileForm').addEventListener('submit', (e) => {
-                    this.handleProfileUpdate(e);
-                });
-
-                // Форма создания заявки
-                document.getElementById('createRequestForm').addEventListener('submit', (e) => {
-                    this.handleCreateRequest(e);
-                });
-            }
-
-            // Обработка обновления профиля
-            handleProfileUpdate(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(e.target);
-                const updatedData = {
-                    fullName: formData.get('profileFullName'),
-                    phone: formData.get('profilePhone'),
-                    email: formData.get('profileEmail')
-                };
-
-                try {
-                    const users = JSON.parse(localStorage.getItem('users') || '[]');
-                    const userIndex = users.findIndex(u => u.id === this.currentUser.userId);
-                    
-                    if (userIndex !== -1) {
-                        users[userIndex] = { ...users[userIndex], ...updatedData, updatedAt: new Date().toISOString() };
-                        localStorage.setItem('users', JSON.stringify(users));
-                        
-                        // Обновляем сессию
-                        this.currentUser.fullName = updatedData.fullName;
-                        localStorage.setItem('currentSession', JSON.stringify(this.currentUser));
-                        
-                        this.loadUserData();
-                        this.showNotification('Профиль успешно обновлен', 'success');
-                    }
-                } catch (error) {
-                    this.showNotification('Ошибка при обновлении профиля', 'error');
-                }
-            }
-
-            // Обработка создания заявки
-            handleCreateRequest(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(e.target);
-                const requestData = {
-                    id: this.generateId(),
-                    userId: this.currentUser.userId,
-                    title: formData.get('requestTitle'),
-                    category: formData.get('requestCategory'),
-                    priority: formData.get('requestPriority'),
-                    description: formData.get('requestDescription'),
-                    status: 'new',
-                    managerId: null,
-                    files: [],
-                    comments: [],
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    completedAt: null
-                };
-
-                try {
-                    const allRequests = JSON.parse(localStorage.getItem('requests') || '[]');
-                    allRequests.push(requestData);
-                    localStorage.setItem('requests', JSON.stringify(allRequests));
-                    
-                    this.loadUserRequests();
-                    this.updateStats();
-                    this.renderRecentRequests();
-                    
-                    // Очищаем форму
-                    e.target.reset();
-                    
-                    this.showNotification('Заявка успешно создана', 'success');
-                    
-                    // Переходим на страницу заявок
-                    setTimeout(() => {
-                        this.showPage('requests');
-                    }, 1500);
-                    
-                } catch (error) {
-                    this.showNotification('Ошибка при создании заявки', 'error');
-                }
-            }
-
-            // Отображение последних заявок
-            renderRecentRequests() {
-                const container = document.getElementById('recentRequestsContainer');
-                const recentRequests = this.userRequests
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                    .slice(0, 5);
-
-                if (recentRequests.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <h4>Заявок пока нет</h4>
-                            <p>Создайте первую заявку, чтобы начать работу</p>
-                            <a href="#" class="btn btn-primary" data-page="create-request">Создать заявку</a>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = `
-                        <table class="requests-table">
-                            <thead>
-                                <tr>
-                                    <th>Заголовок</th>
-                                    <th>Категория</th>
-                                    <th>Приоритет</th>
-                                    <th>Статус</th>
-                                    <th>Дата создания</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${recentRequests.map(req => `
-                                    <tr>
-                                        <td>${req.title}</td>
-                                        <td>${this.getCategoryName(req.category)}</td>
-                                        <td>${this.getPriorityName(req.priority)}</td>
-                                        <td><span class="status-badge status-${req.status}">${this.getStatusName(req.status)}</span></td>
-                                        <td>${new Date(req.createdAt).toLocaleDateString('ru-RU')}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                        <div style="text-align: center; margin-top: 1rem;">
-                            <a href="#" class="btn btn-secondary" data-page="requests">Показать все заявки</a>
-                        </div>
-                    `;
-                }
-
-                // Переинициализируем обработчики для новых ссылок
-                container.querySelectorAll('[data-page]').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.showPage(link.getAttribute('data-page'));
-                    });
-                });
-            }
-
-            // Отображение всех заявок
-            renderAllRequests() {
-                const container = document.getElementById('requestsContainer');
-                
-                if (this.userRequests.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <h4>У вас пока нет заявок</h4>
-                            <p>Создайте первую заявку для начала работы</p>
-                            <a href="#" class="btn btn-primary" data-page="create-request">Создать заявку</a>
-                        </div>
-                    `;
-                } else {
-                    const sortedRequests = this.userRequests.sort((a, b) => 
-                        new Date(b.createdAt) - new Date(a.createdAt)
-                    );
-
-                    container.innerHTML = `
-                        <table class="requests-table">
-                            <thead>
-                                <tr>
-                                    <th>Заголовок</th>
-                                    <th>Категория</th>
-                                    <th>Приоритет</th>
-                                    <th>Статус</th>
-                                    <th>Дата создания</th>
-                                    <th>Описание</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${sortedRequests.map(req => `
-                                    <tr>
-                                        <td><strong>${req.title}</strong></td>
-                                        <td>${this.getCategoryName(req.category)}</td>
-                                        <td>${this.getPriorityName(req.priority)}</td>
-                                        <td><span class="status-badge status-${req.status}">${this.getStatusName(req.status)}</span></td>
-                                        <td>${new Date(req.createdAt).toLocaleDateString('ru-RU')}</td>
-                                        <td>${req.description.length > 100 ? req.description.substring(0, 100) + '...' : req.description}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                }
-
-                // Переинициализируем обработчики
-                container.querySelectorAll('[data-page]').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.showPage(link.getAttribute('data-page'));
-                    });
-                });
-            }
-
-            // Утилиты
-            generateId() {
-                return 'req_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
-
-            getCategoryName(category) {
-                const categories = {
-                    'maintenance': 'Техобслуживание',
-                    'repair': 'Ремонт',
-                    'supply': 'Поставка',
-                    'consultation': 'Консультация',
-                    'other': 'Другое'
-                };
-                return categories[category] || category;
-            }
-
-            getPriorityName(priority) {
-                const priorities = {
-                    'low': 'Низкий',
-                    'medium': 'Средний',
-                    'high': 'Высокий'
-                };
-                return priorities[priority] || priority;
-            }
-
-            getStatusName(status) {
-                const statuses = {
-                    'new': 'Новая',
-                    'in_progress': 'В работе',
-                    'completed': 'Выполнена',
-                    'rejected': 'Отклонена'
-                };
-                return statuses[status] || status;
-            }
-
-            showNotification(message, type = 'success') {
-                // Создаем уведомление
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.textContent = message;
-                notification.style.position = 'fixed';
-                notification.style.top = '2rem';
-                notification.style.right = '2rem';
-                notification.style.padding = '1rem 1.5rem';
-                notification.style.borderRadius = 'var(--border-radius)';
-                notification.style.color = 'var(--white)';
-                notification.style.fontWeight = '500';
-                notification.style.boxShadow = 'var(--shadow)';
-                notification.style.zIndex = '1000';
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                notification.style.transition = 'all 0.3s ease';
-                notification.style.background = type === 'success' ? 'var(--success-color)' : 'var(--error-color)';
-
-                document.body.appendChild(notification);
-
-                // Показываем
-                setTimeout(() => {
-                    notification.style.opacity = '1';
-                    notification.style.transform = 'translateX(0)';
-                }, 100);
-
-                // Скрываем
-                setTimeout(() => {
-                    notification.style.opacity = '0';
-                    notification.style.transform = 'translateX(100%)';
-                    setTimeout(() => {
-                        document.body.removeChild(notification);
-                    }, 300);
-                }, 4000);
-            }
-        }
-
-        // Функция выхода
-        function logout() {
-            localStorage.removeItem('currentSession');
-            sessionStorage.removeItem('isLoggedIn');
-            window.location.href = 'login.html';
-        }
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', () => {
-            new UserDashboard();
-        });
-    </script>
-</body>
+   </nav>
+  </header>
+  <!-- Main container -->
+  <div class="main-container">
+   <!-- Sidebar -->
+   <aside class="sidebar">
+    <h3>
+     Навигация
+    </h3>
+    <ul class="nav-menu">
+     <li>
+      <a class="nav-link active" data-page="dashboard" href="#">
+       <span class="icon">
+        🏠
+       </span>
+       Главная
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="profile" href="#">
+       <span class="icon">
+        👤
+       </span>
+       Личные данные
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="requests" href="#">
+       <span class="icon">
+        📝
+       </span>
+       Мои заявки
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="create-request" href="#">
+       <span class="icon">
+        ➕
+       </span>
+       Создать заявку
+      </a>
+     </li>
+    </ul>
+   </aside>
+   <!-- Content area -->
+   <main class="content">
+    <!-- Dashboard section -->
+    <section class="page-section active" id="dashboard">
+     <div class="content-header">
+      <h2>
+       Добро пожаловать!
+      </h2>
+      <p>
+       Управляйте своими заявками и отслеживайте их статус
+      </p>
+     </div>
+     <div class="content-body">
+      <!-- Statistics -->
+      <div class="stats-grid">
+       <div class="stat-card">
+        <div class="stat-number" id="totalRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Всего заявок
+        </div>
+       </div>
+       <div class="stat-card">
+        <div class="stat-number" id="pendingRequests">
+         0
+        </div>
+        <div class="stat-label">
+         В обработке
+        </div>
+       </div>
+       <div class="stat-card">
+        <div class="stat-number" id="completedRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Выполнено
+        </div>
+       </div>
+      </div>
+      <!-- Quick actions -->
+      <div class="quick-actions">
+       <h3>
+        Быстрые действия
+       </h3>
+       <div class="actions-grid">
+        <a class="action-card" data-page="create-request" href="#">
+         <div class="action-icon">
+          📝
+         </div>
+         <h4>
+          Создать заявку
+         </h4>
+         <p>
+          Подать новую заявку в систему
+         </p>
+        </a>
+        <a class="action-card" data-page="requests" href="#">
+         <div class="action-icon">
+          📊
+         </div>
+         <h4>
+          Мои заявки
+         </h4>
+         <p>
+          Просмотреть все заявки и их статус
+         </p>
+        </a>
+        <a class="action-card" data-page="profile" href="#">
+         <div class="action-icon">
+          ⚙️
+         </div>
+         <h4>
+          Настройки
+         </h4>
+         <p>
+          Редактировать личные данные
+         </p>
+        </a>
+       </div>
+      </div>
+      <!-- Recent requests -->
+      <div class="recent-requests">
+       <h3>
+        Последние заявки
+       </h3>
+       <div id="recentRequestsContainer">
+        <div class="empty-state">
+         <div class="icon">
+          📭
+         </div>
+         <h4>
+          Заявок пока нет
+         </h4>
+         <p>
+          Создайте первую заявку, чтобы начать работу
+         </p>
+         <a class="btn btn-primary" data-page="create-request" href="#">
+          Создать заявку
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Profile section -->
+    <section class="page-section" id="profile">
+     <div class="content-header">
+      <h2>
+       Личные данные
+      </h2>
+      <p>
+       Управление информацией профиля
+      </p>
+     </div>
+     <div class="content-body">
+      <form id="profileForm">
+       <div class="form-group">
+        <label class="form-label" for="profileFullName">
+         ФИО
+        </label>
+        <input class="form-input" id="profileFullName" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileLogin">
+         Логин
+        </label>
+        <input class="form-input" disabled="" id="profileLogin" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profilePhone">
+         Телефон
+        </label>
+        <input class="form-input" id="profilePhone" required="" type="tel"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileEmail">
+         Email
+        </label>
+        <input class="form-input" id="profileEmail" required="" type="email"/>
+       </div>
+       <button class="btn btn-primary" type="submit">
+        Сохранить изменения
+       </button>
+      </form>
+     </div>
+    </section>
+    <!-- Requests section -->
+    <section class="page-section" id="requests">
+     <div class="content-header">
+      <h2>
+       Мои заявки
+      </h2>
+      <p>
+       Просмотр и управление заявками
+      </p>
+     </div>
+     <div class="content-body">
+      <div id="requestsContainer">
+       <div class="empty-state">
+        <div class="icon">
+         📭
+        </div>
+        <h4>
+         У вас пока нет заявок
+        </h4>
+        <p>
+         Создайте первую заявку для начала работы
+        </p>
+        <a class="btn btn-primary" data-page="create-request" href="#">
+         Создать заявку
+        </a>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Create request section -->
+    <section class="page-section" id="create-request">
+     <div class="content-header">
+      <h2>
+       Создание заявки
+      </h2>
+      <p>
+       Заполните форму для подачи новой заявки
+      </p>
+     </div>
+     <div class="content-body">
+      <form id="createRequestForm">
+       <div class="form-group">
+        <label class="form-label" for="requestTitle">
+         Заголовок заявки
+        </label>
+        <input class="form-input" id="requestTitle" placeholder="Краткое описание проблемы" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="requestCategory">
+         Категория
+        </label>
+        <select class="form-input" id="requestCategory" required="">
+         <option value="">
+          Выберите категорию
+         </option>
+         <option value="maintenance">
+          Техническое обслуживание
+         </option>
+         <option value="repair">
+          Ремонт оборудования
+         </option>
+         <option value="supply">
+          Поставка материалов
+         </option>
+         <option value="consultation">
+          Консультация
+         </option>
+         <option value="other">
+          Другое
+         </option>
+        </select>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="requestPriority">
+         Приоритет
+        </label>
+        <select class="form-input" id="requestPriority" required="">
+         <option value="">
+          Выберите приоритет
+         </option>
+         <option value="low">
+          Низкий
+         </option>
+         <option value="medium">
+          Средний
+         </option>
+         <option value="high">
+          Высокий
+         </option>
+        </select>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="requestDescription">
+         Подробное описание
+        </label>
+        <textarea class="form-input" id="requestDescription" placeholder="Опишите проблему подробно..." required="" rows="5"></textarea>
+       </div>
+       <button class="btn btn-primary" type="submit">
+        Создать заявку
+       </button>
+      </form>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script src="js/common.js">
+  </script>
+  <script src="js/dashboard-user.js">
+  </script>
+ </body>
 </html>

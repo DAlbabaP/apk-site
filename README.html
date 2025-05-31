@@ -1,566 +1,389 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Руководство пользователя - АгроЗаявки</title>
-    <style>
-        :root {
-            --primary-color: #2E7D32;
-            --secondary-color: #FFA726;
-            --background-color: #F5F5F5;
-            --text-color: #212121;
-            --success-color: #388E3C;
-            --warning-color: #FF9800;
-            --error-color: #D32F2F;
-            --white: #FFFFFF;
-            --gray-light: #E0E0E0;
-            --gray-medium: #9E9E9E;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
-            --border-radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), #4CAF50);
-            color: var(--white);
-            padding: 3rem 0;
-            margin-bottom: 3rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .navigation-menu {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 2rem;
-            margin-bottom: 3rem;
-            position: sticky;
-            top: 2rem;
-            z-index: 100;
-        }
-
-        .nav-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem;
-            background: var(--background-color);
-            border-radius: var(--border-radius);
-            text-decoration: none;
-            color: var(--text-color);
-            transition: var(--transition);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .nav-link:hover {
-            background: var(--primary-color);
-            color: var(--white);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .nav-link .icon {
-            font-size: 1.5rem;
-        }
-
-        .section {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 3rem;
-            overflow: hidden;
-        }
-
-        .section-header {
-            background: var(--primary-color);
-            color: var(--white);
-            padding: 2rem;
-        }
-
-        .section-header h2 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-body {
-            padding: 2rem;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .feature-card {
-            background: var(--background-color);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .feature-card h4 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .demo-accounts {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .account-card {
-            background: var(--background-color);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            border: 2px solid var(--gray-light);
-            transition: var(--transition);
-        }
-
-        .account-card:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
-        .account-card.admin {
-            border-color: var(--error-color);
-            background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
-        }
-
-        .account-card.manager {
-            border-color: var(--warning-color);
-            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
-        }
-
-        .account-card.user {
-            border-color: var(--success-color);
-            background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
-        }
-
-        .credentials {
-            background: var(--white);
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            margin: 1rem 0;
-            font-family: monospace;
-            font-size: 1.1rem;
-            border: 1px solid var(--gray-light);
-        }
-
-        .steps-list {
-            counter-reset: step-counter;
-        }
-
-        .step {
-            counter-increment: step-counter;
-            background: var(--background-color);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 1rem;
-            position: relative;
-            padding-left: 4rem;
-        }
-
-        .step::before {
-            content: counter(step-counter);
-            position: absolute;
-            left: 1rem;
-            top: 1.5rem;
-            background: var(--primary-color);
-            color: var(--white);
-            width: 2rem;
-            height: 2rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .tech-info {
-            background: linear-gradient(135deg, var(--primary-color), #4CAF50);
-            color: var(--white);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            margin: 2rem 0;
-        }
-
-        .tech-stack {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .tech-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        .warning-box {
-            background: #FFF3E0;
-            border: 2px solid var(--warning-color);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin: 1rem 0;
-        }
-
-        .warning-box h4 {
-            color: var(--warning-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .success-box {
-            background: #E8F5E8;
-            border: 2px solid var(--success-color);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin: 1rem 0;
-        }
-
-        .success-box h4 {
-            color: var(--success-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .file-structure {
-            background: #1e1e1e;
-            color: #f8f8f2;
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            font-family: 'Courier New', monospace;
-            overflow-x: auto;
-            margin: 1rem 0;
-        }
-
-        .troubleshooting {
-            background: var(--background-color);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            margin: 1rem 0;
-        }
-
-        .troubleshooting h4 {
-            color: var(--error-color);
-            margin-bottom: 1rem;
-        }
-
-        .faq-item {
-            background: var(--white);
-            border: 1px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            margin-bottom: 1rem;
-            overflow: hidden;
-        }
-
-        .faq-question {
-            background: var(--background-color);
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .faq-question:hover {
-            background: var(--gray-light);
-        }
-
-        .faq-answer {
-            padding: 1.5rem;
-            display: none;
-        }
-
-        .faq-answer.active {
-            display: block;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .nav-links {
-                grid-template-columns: 1fr;
-            }
-
-            .feature-grid,
-            .demo-accounts {
-                grid-template-columns: 1fr;
-            }
-
-            .section-body {
-                padding: 1rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header class="header">
-            <h1>📚 АгроЗаявки</h1>
-            <p>Полное руководство пользователя системы управления заявками для АПК</p>
-        </header>
-
-        <!-- Quick Navigation -->
-        <nav class="navigation-menu">
-            <h3 style="margin-bottom: 1rem; color: var(--primary-color);">Быстрая навигация</h3>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link" target="_blank">
-                    <span class="icon">🏠</span>
-                    <span>Главная страница</span>
-                </a>
-                <a href="register.html" class="nav-link" target="_blank">
-                    <span class="icon">📝</span>
-                    <span>Регистрация</span>
-                </a>
-                <a href="login.html" class="nav-link" target="_blank">
-                    <span class="icon">🔐</span>
-                    <span>Авторизация</span>
-                </a>
-                <a href="dashboard-user.html" class="nav-link" target="_blank">
-                    <span class="icon">👤</span>
-                    <span>Кабинет пользователя</span>
-                </a>
-                <a href="dashboard-manager.html" class="nav-link" target="_blank">
-                    <span class="icon">👨‍💼</span>
-                    <span>Кабинет менеджера</span>
-                </a>
-                <a href="dashboard-admin.html" class="nav-link" target="_blank">
-                    <span class="icon">👨‍💻</span>
-                    <span>Панель администратора</span>
-                </a>
-                <a href="products-api.html" class="nav-link" target="_blank">
-                    <span class="icon">📦</span>
-                    <span>API Товаров</span>
-                </a>
-                <a href="uml-diagrams.html" class="nav-link" target="_blank">
-                    <span class="icon">🏗️</span>
-                    <span>UML Диаграммы</span>
-                </a>
-                <a href="project-presentation.html" class="nav-link" target="_blank">
-                    <span class="icon">📊</span>
-                    <span>Презентация</span>
-                </a>
-            </div>
-        </nav>
-
-        <!-- Getting Started -->
-        <section class="section">
-            <div class="section-header">
-                <h2>🚀 Быстрый старт</h2>
-                <p>Как начать работу с системой АгроЗаявки</p>
-            </div>
-            
-            <div class="section-body">
-                <div class="success-box">
-                    <h4>✅ Система полностью готова к работе!</h4>
-                    <p>Все файлы находятся в локальной папке и работают без установки дополнительного ПО. Просто откройте любой HTML файл в браузере.</p>
-                </div>
-
-                <div class="steps-list">
-                    <div class="step">
-                        <h4>Откройте главную страницу</h4>
-                        <p>Начните с файла <code>index.html</code> - это главная страница системы с описанием возможностей.</p>
-                    </div>
-
-                    <div class="step">
-                        <h4>Зарегистрируйтесь или войдите</h4>
-                        <p>Используйте готовые демо-аккаунты или создайте новых пользователей через форму регистрации.</p>
-                    </div>
-
-                    <div class="step">
-                        <h4>Изучите функционал</h4>
-                        <p>В зависимости от роли, вам будут доступны разные возможности системы.</p>
-                    </div>
-
-                    <div class="step">
-                        <h4>Создайте тестовые данные</h4>
-                        <p>Добавьте заявки, товары и протестируйте все сценарии работы.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Demo Accounts -->
-        <section class="section">
-            <div class="section-header">
-                <h2>👥 Демо-аккаунты</h2>
-                <p>Готовые учетные записи для тестирования всех ролей</p>
-            </div>
-            
-            <div class="section-body">
-                <div class="demo-accounts">
-                    <div class="account-card admin">
-                        <h4>👨‍💻 Администратор</h4>
-                        <div class="credentials">
-                            Логин: admin<br>
-                            Пароль: admin
-                        </div>
-                        <p><strong>Возможности:</strong></p>
-                        <ul style="text-align: left; margin-top: 0.5rem;">
-                            <li>Управление пользователями</li>
-                            <li>Просмотр всех заявок</li>
-                            <li>Назначение исполнителей</li>
-                            <li>Генерация отчетов</li>
-                            <li>Настройка системы</li>
-                        </ul>
-                    </div>
-
-                    <div class="account-card manager">
-                        <h4>👨‍💼 Менеджер</h4>
-                        <div class="credentials">
-                            Создается при регистрации<br>
-                            с выбором роли "Менеджер"
-                        </div>
-                        <p><strong>Возможности:</strong></p>
-                        <ul style="text-align: left; margin-top: 0.5rem;">
-                            <li>Обработка назначенных заявок</li>
-                            <li>Изменение статусов</li>
-                            <li>Загрузка отчетных материалов</li>
-                            <li>Комментирование</li>
-                            <li>Фильтрация заявок</li>
-                        </ul>
-                    </div>
-
-                    <div class="account-card user">
-                        <h4>👤 Пользователь</h4>
-                        <div class="credentials">
-                            Создается при регистрации<br>
-                            с выбором роли "Пользователь"
-                        </div>
-                        <p><strong>Возможности:</strong></p>
-                        <ul style="text-align: left; margin-top: 0.5rem;">
-                            <li>Создание заявок</li>
-                            <li>Отслеживание статуса</li>
-                            <li>Просмотр истории</li>
-                            <li>Редактирование профиля</li>
-                            <li>Обратная связь</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="warning-box">
-                    <h4>⚠️ Важная информация</h4>
-                    <p>Все данные сохраняются в LocalStorage браузера. При очистке кэша браузера все данные будут удалены. Для сброса системы в начальное состояние используйте функцию "Очистить все данные" в панели администратора.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- System Features -->
-        <section class="section">
-            <div class="section-header">
-                <h2>🎯 Основные возможности</h2>
-                <p>Полный обзор функциональности системы</p>
-            </div>
-            
-            <div class="section-body">
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h4>📝 Управление заявками</h4>
-                        <p>Создание, редактирование, отслеживание статуса заявок. Система автоматического назначения исполнителей и контроля сроков.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <h4>👥 Ролевая система</h4>
-                        <p>Три уровня доступа: пользователи, менеджеры и администраторы. Каждая роль имеет свой набор прав и возможностей.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <h4>📊 Аналитика и отчеты</h4>
-                        <p>Детальная статистика работы системы, экспорт данных, мониторинг KPI и эффективности обработки заявок.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <h4>💬 Система комментариев</h4>
-                        <p>Полноценная обратная связь между участниками процесса с возможностью прикрепления файлов.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <h4>📦 API управления товарами</h4>
-                        <p>Специализированный модуль для работы с товарами АПК, включая проверку совместимости и создание наборов.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <h4>🔒 Безопасность данных</h4>
-                        <p>Хеширование паролей, ролевое разграничение доступа, валидация входных данных на всех уровнях.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Technical Information -->
-        <section class="section">
-            <div class="section-header">
-                <h2>⚙️ Техническая информация</h2>
-                <p>Архитектура и технологии системы</p>
-            </div>
-            
-            <div class="section-body">
-                <div class="tech-info">
-                    <h4>🛠️ Технологический стек</h4>
-                    <p>Система построена на современных веб-технологиях для максимальной совместимости и производительности.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">HTML5</span>
-                        <span class="tech-badge">CSS3</span>
-                        <span class="tech-badge">JavaScript ES6+</span>
-                        <span class="tech-badge">LocalStorage</span>
-                        <span class="tech-badge">Responsive Design</span>
-                        <span class="tech-badge">PWA Ready</span>
-                    </div>
-                </div>
-
-                <h4>📁 Структура проекта</h4>
-                <div class="file-structure">
-agro-zayavki/
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Руководство пользователя - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/README.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="container">
+   <header class="header">
+    <h1>
+     📚 АгроЗаявки
+    </h1>
+    <p>
+     Полное руководство пользователя системы управления заявками для АПК
+    </p>
+   </header>
+   <!-- Quick Navigation -->
+   <nav class="navigation-menu">
+    <h3 style="margin-bottom: 1rem; color: var(--primary-color);">
+     Быстрая навигация
+    </h3>
+    <div class="nav-links">
+     <a class="nav-link" href="index.html" target="_blank">
+      <span class="icon">
+       🏠
+      </span>
+      <span>
+       Главная страница
+      </span>
+     </a>
+     <a class="nav-link" href="register.html" target="_blank">
+      <span class="icon">
+       📝
+      </span>
+      <span>
+       Регистрация
+      </span>
+     </a>
+     <a class="nav-link" href="login.html" target="_blank">
+      <span class="icon">
+       🔐
+      </span>
+      <span>
+       Авторизация
+      </span>
+     </a>
+     <a class="nav-link" href="dashboard-user.html" target="_blank">
+      <span class="icon">
+       👤
+      </span>
+      <span>
+       Кабинет пользователя
+      </span>
+     </a>
+     <a class="nav-link" href="dashboard-manager.html" target="_blank">
+      <span class="icon">
+       👨‍💼
+      </span>
+      <span>
+       Кабинет менеджера
+      </span>
+     </a>
+     <a class="nav-link" href="dashboard-admin.html" target="_blank">
+      <span class="icon">
+       👨‍💻
+      </span>
+      <span>
+       Панель администратора
+      </span>
+     </a>
+     <a class="nav-link" href="products-api.html" target="_blank">
+      <span class="icon">
+       📦
+      </span>
+      <span>
+       API Товаров
+      </span>
+     </a>
+     <a class="nav-link" href="uml-diagrams.html" target="_blank">
+      <span class="icon">
+       🏗️
+      </span>
+      <span>
+       UML Диаграммы
+      </span>
+     </a>
+     <a class="nav-link" href="project-presentation.html" target="_blank">
+      <span class="icon">
+       📊
+      </span>
+      <span>
+       Презентация
+      </span>
+     </a>
+    </div>
+   </nav>
+   <!-- Getting Started -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      🚀 Быстрый старт
+     </h2>
+     <p>
+      Как начать работу с системой АгроЗаявки
+     </p>
+    </div>
+    <div class="section-body">
+     <div class="success-box">
+      <h4>
+       ✅ Система полностью готова к работе!
+      </h4>
+      <p>
+       Все файлы находятся в локальной папке и работают без установки дополнительного ПО. Просто откройте любой HTML файл в браузере.
+      </p>
+     </div>
+     <div class="steps-list">
+      <div class="step">
+       <h4>
+        Откройте главную страницу
+       </h4>
+       <p>
+        Начните с файла
+        <code>
+         index.html
+        </code>
+        - это главная страница системы с описанием возможностей.
+       </p>
+      </div>
+      <div class="step">
+       <h4>
+        Зарегистрируйтесь или войдите
+       </h4>
+       <p>
+        Используйте готовые демо-аккаунты или создайте новых пользователей через форму регистрации.
+       </p>
+      </div>
+      <div class="step">
+       <h4>
+        Изучите функционал
+       </h4>
+       <p>
+        В зависимости от роли, вам будут доступны разные возможности системы.
+       </p>
+      </div>
+      <div class="step">
+       <h4>
+        Создайте тестовые данные
+       </h4>
+       <p>
+        Добавьте заявки, товары и протестируйте все сценарии работы.
+       </p>
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- Demo Accounts -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      👥 Демо-аккаунты
+     </h2>
+     <p>
+      Готовые учетные записи для тестирования всех ролей
+     </p>
+    </div>
+    <div class="section-body">
+     <div class="demo-accounts">
+      <div class="account-card admin">
+       <h4>
+        👨‍💻 Администратор
+       </h4>
+       <div class="credentials">
+        Логин: admin
+        <br/>
+        Пароль: admin
+       </div>
+       <p>
+        <strong>
+         Возможности:
+        </strong>
+       </p>
+       <ul style="text-align: left; margin-top: 0.5rem;">
+        <li>
+         Управление пользователями
+        </li>
+        <li>
+         Просмотр всех заявок
+        </li>
+        <li>
+         Назначение исполнителей
+        </li>
+        <li>
+         Генерация отчетов
+        </li>
+        <li>
+         Настройка системы
+        </li>
+       </ul>
+      </div>
+      <div class="account-card manager">
+       <h4>
+        👨‍💼 Менеджер
+       </h4>
+       <div class="credentials">
+        Создается при регистрации
+        <br/>
+        с выбором роли "Менеджер"
+       </div>
+       <p>
+        <strong>
+         Возможности:
+        </strong>
+       </p>
+       <ul style="text-align: left; margin-top: 0.5rem;">
+        <li>
+         Обработка назначенных заявок
+        </li>
+        <li>
+         Изменение статусов
+        </li>
+        <li>
+         Загрузка отчетных материалов
+        </li>
+        <li>
+         Комментирование
+        </li>
+        <li>
+         Фильтрация заявок
+        </li>
+       </ul>
+      </div>
+      <div class="account-card user">
+       <h4>
+        👤 Пользователь
+       </h4>
+       <div class="credentials">
+        Создается при регистрации
+        <br/>
+        с выбором роли "Пользователь"
+       </div>
+       <p>
+        <strong>
+         Возможности:
+        </strong>
+       </p>
+       <ul style="text-align: left; margin-top: 0.5rem;">
+        <li>
+         Создание заявок
+        </li>
+        <li>
+         Отслеживание статуса
+        </li>
+        <li>
+         Просмотр истории
+        </li>
+        <li>
+         Редактирование профиля
+        </li>
+        <li>
+         Обратная связь
+        </li>
+       </ul>
+      </div>
+     </div>
+     <div class="warning-box">
+      <h4>
+       ⚠️ Важная информация
+      </h4>
+      <p>
+       Все данные сохраняются в LocalStorage браузера. При очистке кэша браузера все данные будут удалены. Для сброса системы в начальное состояние используйте функцию "Очистить все данные" в панели администратора.
+      </p>
+     </div>
+    </div>
+   </section>
+   <!-- System Features -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      🎯 Основные возможности
+     </h2>
+     <p>
+      Полный обзор функциональности системы
+     </p>
+    </div>
+    <div class="section-body">
+     <div class="feature-grid">
+      <div class="feature-card">
+       <h4>
+        📝 Управление заявками
+       </h4>
+       <p>
+        Создание, редактирование, отслеживание статуса заявок. Система автоматического назначения исполнителей и контроля сроков.
+       </p>
+      </div>
+      <div class="feature-card">
+       <h4>
+        👥 Ролевая система
+       </h4>
+       <p>
+        Три уровня доступа: пользователи, менеджеры и администраторы. Каждая роль имеет свой набор прав и возможностей.
+       </p>
+      </div>
+      <div class="feature-card">
+       <h4>
+        📊 Аналитика и отчеты
+       </h4>
+       <p>
+        Детальная статистика работы системы, экспорт данных, мониторинг KPI и эффективности обработки заявок.
+       </p>
+      </div>
+      <div class="feature-card">
+       <h4>
+        💬 Система комментариев
+       </h4>
+       <p>
+        Полноценная обратная связь между участниками процесса с возможностью прикрепления файлов.
+       </p>
+      </div>
+      <div class="feature-card">
+       <h4>
+        📦 API управления товарами
+       </h4>
+       <p>
+        Специализированный модуль для работы с товарами АПК, включая проверку совместимости и создание наборов.
+       </p>
+      </div>
+      <div class="feature-card">
+       <h4>
+        🔒 Безопасность данных
+       </h4>
+       <p>
+        Хеширование паролей, ролевое разграничение доступа, валидация входных данных на всех уровнях.
+       </p>
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- Technical Information -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      ⚙️ Техническая информация
+     </h2>
+     <p>
+      Архитектура и технологии системы
+     </p>
+    </div>
+    <div class="section-body">
+     <div class="tech-info">
+      <h4>
+       🛠️ Технологический стек
+      </h4>
+      <p>
+       Система построена на современных веб-технологиях для максимальной совместимости и производительности.
+      </p>
+      <div class="tech-stack">
+       <span class="tech-badge">
+        HTML5
+       </span>
+       <span class="tech-badge">
+        CSS3
+       </span>
+       <span class="tech-badge">
+        JavaScript ES6+
+       </span>
+       <span class="tech-badge">
+        LocalStorage
+       </span>
+       <span class="tech-badge">
+        Responsive Design
+       </span>
+       <span class="tech-badge">
+        PWA Ready
+       </span>
+      </div>
+     </div>
+     <h4>
+      📁 Структура проекта
+     </h4>
+     <div class="file-structure">
+      agro-zayavki/
 ├── index.html              # Главная страница
 ├── register.html           # Страница регистрации
 ├── login.html              # Страница авторизации
@@ -571,279 +394,478 @@ agro-zayavki/
 ├── uml-diagrams.html       # UML диаграммы системы
 ├── project-presentation.html # Презентация проекта
 └── README.html             # Руководство пользователя (этот файл)
-                </div>
-
-                <h4>🔧 Архитектурные принципы</h4>
-                <ul style="margin-top: 1rem;">
-                    <li><strong>Модульность:</strong> Каждая страница - самостоятельный модуль</li>
-                    <li><strong>Переиспользование:</strong> Общие стили и компоненты</li>
-                    <li><strong>Безопасность:</strong> Валидация данных на всех уровнях</li>
-                    <li><strong>Производительность:</strong> Оптимизированный код без лишних зависимостей</li>
-                    <li><strong>Доступность:</strong> Соответствие стандартам WCAG 2.1</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- User Scenarios -->
-        <section class="section">
-            <div class="section-header">
-                <h2>📋 Сценарии использования</h2>
-                <p>Пошаговые инструкции для основных рабочих процессов</p>
-            </div>
-            
-            <div class="section-body">
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>👤 Как пользователю создать заявку?</span>
-                        <span>▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <ol>
-                            <li>Зарегистрируйтесь или войдите в систему</li>
-                            <li>В личном кабинете нажмите "Создать заявку"</li>
-                            <li>Заполните все обязательные поля: заголовок, категория, приоритет, описание</li>
-                            <li>Нажмите "Создать заявку"</li>
-                            <li>Заявка появится в разделе "Мои заявки" со статусом "Новая"</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>👨‍💼 Как менеджеру обработать заявку?</span>
-                        <span>▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <ol>
-                            <li>Войдите в систему как менеджер</li>
-                            <li>Перейдите в раздел "Заявки на исполнении"</li>
-                            <li>Выберите заявку и нажмите "Обработать"</li>
-                            <li>Измените статус на "В работе"</li>
-                            <li>Добавьте комментарий о ходе выполнения</li>
-                            <li>При завершении загрузите отчетные материалы</li>
-                            <li>Измените статус на "Выполнена"</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>👨‍💻 Как администратору управлять пользователями?</span>
-                        <span>▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <ol>
-                            <li>Войдите как администратор (admin/admin)</li>
-                            <li>Перейдите в раздел "Пользователи"</li>
-                            <li>Используйте фильтры для поиска нужных пользователей</li>
-                            <li>Для добавления нажмите "Добавить пользователя"</li>
-                            <li>Для редактирования нажмите "Редактировать" у пользователя</li>
-                            <li>Для блокировки используйте кнопку "Заблокировать/Активировать"</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFaq(this)">
-                        <span>📦 Как работать с API товаров?</span>
-                        <span>▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <ol>
-                            <li>Откройте страницу "API Товаров"</li>
-                            <li>Перейдите на вкладку "Товары"</li>
-                            <li>Заполните форму добавления товара</li>
-                            <li>Укажите условия хранения, сезонность, упаковку</li>
-                            <li>На вкладке "Наборы" создайте наборы из совместимых товаров</li>
-                            <li>Используйте вкладку "Совместимость" для проверки товаров</li>
-                            <li>На вкладке "Тест API" изучите работу API endpoints</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Troubleshooting -->
-        <section class="section">
-            <div class="section-header">
-                <h2>🔧 Устранение неполадок</h2>
-                <p>Решение часто встречающихся проблем</p>
-            </div>
-            
-            <div class="section-body">
-                <div class="troubleshooting">
-                    <h4>❌ Не работает авторизация</h4>
-                    <p><strong>Решение:</strong> Убедитесь, что JavaScript включен в браузере. Проверьте правильность логина и пароля. Для сброса используйте администраторский аккаунт (admin/admin).</p>
-                </div>
-
-                <div class="troubleshooting">
-                    <h4>❌ Пропали данные</h4>
-                    <p><strong>Решение:</strong> Данные хранятся в LocalStorage браузера. Проверьте, не была ли очищена история браузера. Для восстановления создайте новые тестовые данные.</p>
-                </div>
-
-                <div class="troubleshooting">
-                    <h4>❌ Страница не загружается</h4>
-                    <p><strong>Решение:</strong> Убедитесь, что файлы находятся в одной папке. Открывайте файлы напрямую в браузере, а не через текстовый редактор. Проверьте поддержку HTML5 в браузере.</p>
-                </div>
-
-                <div class="troubleshooting">
-                    <h4>❌ Не работает на мобильном устройстве</h4>
-                    <p><strong>Решение:</strong> Система полностью адаптивна. Убедитесь, что используется современный мобильный браузер. Возможно, потребуется обновить браузер.</p>
-                </div>
-
-                <div class="warning-box">
-                    <h4>⚠️ Системные требования</h4>
-                    <p>Для корректной работы системы требуется современный браузер с поддержкой ES6+, LocalStorage и CSS3. Рекомендуемые браузеры: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Development Info -->
-        <section class="section">
-            <div class="section-header">
-                <h2>💻 Информация для разработчиков</h2>
-                <p>Техническая документация и возможности расширения</p>
-            </div>
-            
-            <div class="section-body">
-                <h4>📝 Выполненные модули демо-экзамена:</h4>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h4>Модуль 1: Проектирование ✅</h4>
-                        <ul>
-                            <li>Полное техническое задание</li>
-                            <li>Схема базы данных (LocalStorage)</li>
-                            <li>Модель предметной области</li>
-                            <li>Сценарии пользователей (A1-F1)</li>
-                            <li>6+ макетов интерфейсов</li>
-                        </ul>
-                    </div>
-
-                    <div class="feature-card">
-                        <h4>Модуль 2: Верстка и дизайн ✅</h4>
-                        <ul>
-                            <li>Адаптивная верстка</li>
-                            <li>Логотип и брендбук</li>
-                            <li>Анимации и интерактивность</li>
-                            <li>Валидная HTML/CSS разметка</li>
-                            <li>Современный UX/UI дизайн</li>
-                        </ul>
-                    </div>
-
-                    <div class="feature-card">
-                        <h4>Модуль 3: Программирование ✅</h4>
-                        <ul>
-                            <li>API управления товарами</li>
-                            <li>Проверка совместимости</li>
-                            <li>CRUD операции</li>
-                            <li>Система авторизации</li>
-                            <li>Валидация данных</li>
-                        </ul>
-                    </div>
-
-                    <div class="feature-card">
-                        <h4>Модуль 4: Презентация ✅</h4>
-                        <ul>
-                            <li>UML диаграммы (Use Case, Architecture)</li>
-                            <li>PowerPoint презентация</li>
-                            <li>Демонстрация функционала</li>
-                            <li>Бизнес-план и ROI</li>
-                            <li>Конкурентные преимущества</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="success-box">
-                    <h4>✅ Особенности реализации</h4>
-                    <ul>
-                        <li><strong>Время разработки:</strong> Соответствует ограничению в 12 часов</li>
-                        <li><strong>Локальная работа:</strong> Никаких серверов - только браузер</li>
-                        <li><strong>Полная функциональность:</strong> Все сценарии из ТЗ реализованы</li>
-                        <li><strong>Современные технологии:</strong> ES6+, CSS Grid, Flexbox</li>
-                        <li><strong>Готовность к продакшену:</strong> Оптимизированный и валидный код</li>
-                    </ul>
-                </div>
-
-                <h4>🔧 Возможности расширения:</h4>
-                <ul style="margin-top: 1rem;">
-                    <li>Интеграция с внешними API (CRM, ERP системы)</li>
-                    <li>Добавление push-уведомлений</li>
-                    <li>Реализация PWA для оффлайн работы</li>
-                    <li>Интеграция с базами данных (MySQL, PostgreSQL)</li>
-                    <li>Добавление системы файлового хранилища</li>
-                    <li>Реализация real-time обновлений через WebSocket</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Contact Information -->
-        <section class="section">
-            <div class="section-header">
-                <h2>📞 Поддержка</h2>
-                <p>Контактная информация и дополнительные ресурсы</p>
-            </div>
-            
-            <div class="section-body">
-                <div class="tech-info">
-                    <h4>🎯 Готовая система для демонстрации</h4>
-                    <p>Система АгроЗаявки полностью готова к презентации заказчику. Все модули демо-экзамена выполнены в соответствии с требованиями.</p>
-                    <div style="margin-top: 1rem;">
-                        <p><strong>Разработчик:</strong> Команда АгроЗаявки</p>
-                        <p><strong>Дата создания:</strong> 2025 год</p>
-                        <p><strong>Версия:</strong> 1.0.0</p>
-                        <p><strong>Лицензия:</strong> Демонстрационная версия</p>
-                    </div>
-                </div>
-
-                <div style="text-align: center; margin-top: 2rem;">
-                    <h4>🚀 Система готова к использованию!</h4>
-                    <p>Начните работу с любой страницы системы и изучите все возможности АгроЗаявки.</p>
-                </div>
-            </div>
-        </section>
+     </div>
+     <h4>
+      🔧 Архитектурные принципы
+     </h4>
+     <ul style="margin-top: 1rem;">
+      <li>
+       <strong>
+        Модульность:
+       </strong>
+       Каждая страница - самостоятельный модуль
+      </li>
+      <li>
+       <strong>
+        Переиспользование:
+       </strong>
+       Общие стили и компоненты
+      </li>
+      <li>
+       <strong>
+        Безопасность:
+       </strong>
+       Валидация данных на всех уровнях
+      </li>
+      <li>
+       <strong>
+        Производительность:
+       </strong>
+       Оптимизированный код без лишних зависимостей
+      </li>
+      <li>
+       <strong>
+        Доступность:
+       </strong>
+       Соответствие стандартам WCAG 2.1
+      </li>
+     </ul>
     </div>
-
-    <script>
-        function toggleFaq(element) {
-            const answer = element.nextElementSibling;
-            const arrow = element.querySelector('span:last-child');
-            
-            if (answer.classList.contains('active')) {
-                answer.classList.remove('active');
-                arrow.textContent = '▼';
-            } else {
-                // Закрываем все другие FAQ
-                document.querySelectorAll('.faq-answer').forEach(item => {
-                    item.classList.remove('active');
-                });
-                document.querySelectorAll('.faq-question span:last-child').forEach(arrow => {
-                    arrow.textContent = '▼';
-                });
-                
-                // Открываем текущий
-                answer.classList.add('active');
-                arrow.textContent = '▲';
-            }
-        }
-
-        // Автоматическое обновление статистики
-        function updateStats() {
-            try {
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const requests = JSON.parse(localStorage.getItem('requests') || '[]');
-                const products = JSON.parse(localStorage.getItem('agro_products') || '[]');
-                
-                console.log(`Статистика системы:
-                - Пользователей: ${users.length}
-                - Заявок: ${requests.length}
-                - Товаров: ${products.length}`);
-            } catch (error) {
-                console.log('Данные системы пока не созданы');
-            }
-        }
-
-        // Проверяем статистику при загрузке
-        document.addEventListener('DOMContentLoaded', updateStats);
-    </script>
-</body>
+   </section>
+   <!-- User Scenarios -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      📋 Сценарии использования
+     </h2>
+     <p>
+      Пошаговые инструкции для основных рабочих процессов
+     </p>
+    </div>
+    <div class="section-body">
+     <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+       <span>
+        👤 Как пользователю создать заявку?
+       </span>
+       <span>
+        ▼
+       </span>
+      </div>
+      <div class="faq-answer">
+       <ol>
+        <li>
+         Зарегистрируйтесь или войдите в систему
+        </li>
+        <li>
+         В личном кабинете нажмите "Создать заявку"
+        </li>
+        <li>
+         Заполните все обязательные поля: заголовок, категория, приоритет, описание
+        </li>
+        <li>
+         Нажмите "Создать заявку"
+        </li>
+        <li>
+         Заявка появится в разделе "Мои заявки" со статусом "Новая"
+        </li>
+       </ol>
+      </div>
+     </div>
+     <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+       <span>
+        👨‍💼 Как менеджеру обработать заявку?
+       </span>
+       <span>
+        ▼
+       </span>
+      </div>
+      <div class="faq-answer">
+       <ol>
+        <li>
+         Войдите в систему как менеджер
+        </li>
+        <li>
+         Перейдите в раздел "Заявки на исполнении"
+        </li>
+        <li>
+         Выберите заявку и нажмите "Обработать"
+        </li>
+        <li>
+         Измените статус на "В работе"
+        </li>
+        <li>
+         Добавьте комментарий о ходе выполнения
+        </li>
+        <li>
+         При завершении загрузите отчетные материалы
+        </li>
+        <li>
+         Измените статус на "Выполнена"
+        </li>
+       </ol>
+      </div>
+     </div>
+     <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+       <span>
+        👨‍💻 Как администратору управлять пользователями?
+       </span>
+       <span>
+        ▼
+       </span>
+      </div>
+      <div class="faq-answer">
+       <ol>
+        <li>
+         Войдите как администратор (admin/admin)
+        </li>
+        <li>
+         Перейдите в раздел "Пользователи"
+        </li>
+        <li>
+         Используйте фильтры для поиска нужных пользователей
+        </li>
+        <li>
+         Для добавления нажмите "Добавить пользователя"
+        </li>
+        <li>
+         Для редактирования нажмите "Редактировать" у пользователя
+        </li>
+        <li>
+         Для блокировки используйте кнопку "Заблокировать/Активировать"
+        </li>
+       </ol>
+      </div>
+     </div>
+     <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+       <span>
+        📦 Как работать с API товаров?
+       </span>
+       <span>
+        ▼
+       </span>
+      </div>
+      <div class="faq-answer">
+       <ol>
+        <li>
+         Откройте страницу "API Товаров"
+        </li>
+        <li>
+         Перейдите на вкладку "Товары"
+        </li>
+        <li>
+         Заполните форму добавления товара
+        </li>
+        <li>
+         Укажите условия хранения, сезонность, упаковку
+        </li>
+        <li>
+         На вкладке "Наборы" создайте наборы из совместимых товаров
+        </li>
+        <li>
+         Используйте вкладку "Совместимость" для проверки товаров
+        </li>
+        <li>
+         На вкладке "Тест API" изучите работу API endpoints
+        </li>
+       </ol>
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- Troubleshooting -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      🔧 Устранение неполадок
+     </h2>
+     <p>
+      Решение часто встречающихся проблем
+     </p>
+    </div>
+    <div class="section-body">
+     <div class="troubleshooting">
+      <h4>
+       ❌ Не работает авторизация
+      </h4>
+      <p>
+       <strong>
+        Решение:
+       </strong>
+       Убедитесь, что JavaScript включен в браузере. Проверьте правильность логина и пароля. Для сброса используйте администраторский аккаунт (admin/admin).
+      </p>
+     </div>
+     <div class="troubleshooting">
+      <h4>
+       ❌ Пропали данные
+      </h4>
+      <p>
+       <strong>
+        Решение:
+       </strong>
+       Данные хранятся в LocalStorage браузера. Проверьте, не была ли очищена история браузера. Для восстановления создайте новые тестовые данные.
+      </p>
+     </div>
+     <div class="troubleshooting">
+      <h4>
+       ❌ Страница не загружается
+      </h4>
+      <p>
+       <strong>
+        Решение:
+       </strong>
+       Убедитесь, что файлы находятся в одной папке. Открывайте файлы напрямую в браузере, а не через текстовый редактор. Проверьте поддержку HTML5 в браузере.
+      </p>
+     </div>
+     <div class="troubleshooting">
+      <h4>
+       ❌ Не работает на мобильном устройстве
+      </h4>
+      <p>
+       <strong>
+        Решение:
+       </strong>
+       Система полностью адаптивна. Убедитесь, что используется современный мобильный браузер. Возможно, потребуется обновить браузер.
+      </p>
+     </div>
+     <div class="warning-box">
+      <h4>
+       ⚠️ Системные требования
+      </h4>
+      <p>
+       Для корректной работы системы требуется современный браузер с поддержкой ES6+, LocalStorage и CSS3. Рекомендуемые браузеры: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+.
+      </p>
+     </div>
+    </div>
+   </section>
+   <!-- Development Info -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      💻 Информация для разработчиков
+     </h2>
+     <p>
+      Техническая документация и возможности расширения
+     </p>
+    </div>
+    <div class="section-body">
+     <h4>
+      📝 Выполненные модули демо-экзамена:
+     </h4>
+     <div class="feature-grid">
+      <div class="feature-card">
+       <h4>
+        Модуль 1: Проектирование ✅
+       </h4>
+       <ul>
+        <li>
+         Полное техническое задание
+        </li>
+        <li>
+         Схема базы данных (LocalStorage)
+        </li>
+        <li>
+         Модель предметной области
+        </li>
+        <li>
+         Сценарии пользователей (A1-F1)
+        </li>
+        <li>
+         6+ макетов интерфейсов
+        </li>
+       </ul>
+      </div>
+      <div class="feature-card">
+       <h4>
+        Модуль 2: Верстка и дизайн ✅
+       </h4>
+       <ul>
+        <li>
+         Адаптивная верстка
+        </li>
+        <li>
+         Логотип и брендбук
+        </li>
+        <li>
+         Анимации и интерактивность
+        </li>
+        <li>
+         Валидная HTML/CSS разметка
+        </li>
+        <li>
+         Современный UX/UI дизайн
+        </li>
+       </ul>
+      </div>
+      <div class="feature-card">
+       <h4>
+        Модуль 3: Программирование ✅
+       </h4>
+       <ul>
+        <li>
+         API управления товарами
+        </li>
+        <li>
+         Проверка совместимости
+        </li>
+        <li>
+         CRUD операции
+        </li>
+        <li>
+         Система авторизации
+        </li>
+        <li>
+         Валидация данных
+        </li>
+       </ul>
+      </div>
+      <div class="feature-card">
+       <h4>
+        Модуль 4: Презентация ✅
+       </h4>
+       <ul>
+        <li>
+         UML диаграммы (Use Case, Architecture)
+        </li>
+        <li>
+         PowerPoint презентация
+        </li>
+        <li>
+         Демонстрация функционала
+        </li>
+        <li>
+         Бизнес-план и ROI
+        </li>
+        <li>
+         Конкурентные преимущества
+        </li>
+       </ul>
+      </div>
+     </div>
+     <div class="success-box">
+      <h4>
+       ✅ Особенности реализации
+      </h4>
+      <ul>
+       <li>
+        <strong>
+         Время разработки:
+        </strong>
+        Соответствует ограничению в 12 часов
+       </li>
+       <li>
+        <strong>
+         Локальная работа:
+        </strong>
+        Никаких серверов - только браузер
+       </li>
+       <li>
+        <strong>
+         Полная функциональность:
+        </strong>
+        Все сценарии из ТЗ реализованы
+       </li>
+       <li>
+        <strong>
+         Современные технологии:
+        </strong>
+        ES6+, CSS Grid, Flexbox
+       </li>
+       <li>
+        <strong>
+         Готовность к продакшену:
+        </strong>
+        Оптимизированный и валидный код
+       </li>
+      </ul>
+     </div>
+     <h4>
+      🔧 Возможности расширения:
+     </h4>
+     <ul style="margin-top: 1rem;">
+      <li>
+       Интеграция с внешними API (CRM, ERP системы)
+      </li>
+      <li>
+       Добавление push-уведомлений
+      </li>
+      <li>
+       Реализация PWA для оффлайн работы
+      </li>
+      <li>
+       Интеграция с базами данных (MySQL, PostgreSQL)
+      </li>
+      <li>
+       Добавление системы файлового хранилища
+      </li>
+      <li>
+       Реализация real-time обновлений через WebSocket
+      </li>
+     </ul>
+    </div>
+   </section>
+   <!-- Contact Information -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      📞 Поддержка
+     </h2>
+     <p>
+      Контактная информация и дополнительные ресурсы
+     </p>
+    </div>
+    <div class="section-body">
+     <div class="tech-info">
+      <h4>
+       🎯 Готовая система для демонстрации
+      </h4>
+      <p>
+       Система АгроЗаявки полностью готова к презентации заказчику. Все модули демо-экзамена выполнены в соответствии с требованиями.
+      </p>
+      <div style="margin-top: 1rem;">
+       <p>
+        <strong>
+         Разработчик:
+        </strong>
+        Команда АгроЗаявки
+       </p>
+       <p>
+        <strong>
+         Дата создания:
+        </strong>
+        2025 год
+       </p>
+       <p>
+        <strong>
+         Версия:
+        </strong>
+        1.0.0
+       </p>
+       <p>
+        <strong>
+         Лицензия:
+        </strong>
+        Демонстрационная версия
+       </p>
+      </div>
+     </div>
+     <div style="text-align: center; margin-top: 2rem;">
+      <h4>
+       🚀 Система готова к использованию!
+      </h4>
+      <p>
+       Начните работу с любой страницы системы и изучите все возможности АгроЗаявки.
+      </p>
+     </div>
+    </div>
+   </section>
+  </div>
+  <script src="js/common.js">
+  </script>
+  <script src="js/README.js">
+  </script>
+ </body>
 </html>

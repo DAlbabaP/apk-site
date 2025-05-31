@@ -1,1645 +1,400 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Личный кабинет менеджера - АгроЗаявки</title>
-    <style>
-        :root {
-            --primary-color: #2E7D32;
-            --secondary-color: #FFA726;
-            --background-color: #F5F5F5;
-            --text-color: #212121;
-            --error-color: #D32F2F;
-            --success-color: #388E3C;
-            --warning-color: #FF9800;
-            --white: #FFFFFF;
-            --gray-light: #E0E0E0;
-            --gray-medium: #9E9E9E;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
-            --border-radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), #4CAF50);
-            color: var(--white);
-            padding: 1rem 0;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-            color: var(--white);
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--secondary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--secondary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .user-details h3 {
-            margin: 0;
-            font-size: 1rem;
-        }
-
-        .user-details p {
-            margin: 0;
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: var(--white);
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Main layout */
-        .main-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 2rem;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 1.5rem;
-            height: fit-content;
-            position: sticky;
-            top: 100px;
-        }
-
-        .sidebar h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--gray-light);
-        }
-
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-menu li {
-            margin-bottom: 0.5rem;
-        }
-
-        .nav-menu a {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            color: var(--text-color);
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-
-        .nav-menu a:hover,
-        .nav-menu a.active {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-
-        .nav-menu .icon {
-            font-size: 1.2rem;
-            width: 20px;
-        }
-
-        /* Content area */
-        .content {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .content-header {
-            background: linear-gradient(135deg, var(--primary-color), #4CAF50);
-            color: var(--white);
-            padding: 2rem;
-        }
-
-        .content-header h2 {
-            margin-bottom: 0.5rem;
-            font-size: 1.8rem;
-        }
-
-        .content-header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-
-        .content-body {
-            padding: 2rem;
-        }
-
-        /* Stats cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--white);
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            text-align: center;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--primary-color);
-        }
-
-        .stat-card.urgent::before {
-            background: var(--error-color);
-        }
-
-        .stat-card.warning::before {
-            background: var(--warning-color);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card.urgent .stat-number {
-            color: var(--error-color);
-        }
-
-        .stat-card.warning .stat-number {
-            color: var(--warning-color);
-        }
-
-        .stat-label {
-            color: var(--gray-medium);
-            font-size: 0.9rem;
-        }
-
-        /* Filters */
-        .filters {
-            background: var(--background-color);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .filter-label {
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: var(--text-color);
-        }
-
-        .filter-select {
-            padding: 0.5rem;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            background: var(--white);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .filter-select:focus {
-            border-color: var(--primary-color);
-            outline: none;
-        }
-
-        /* Requests table */
-        .requests-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--white);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .requests-table th,
-        .requests-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--gray-light);
-        }
-
-        .requests-table th {
-            background: var(--primary-color);
-            color: var(--white);
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-
-        .requests-table tr:hover {
-            background: rgba(46, 125, 50, 0.05);
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .status-new {
-            background: #E3F2FD;
-            color: #1976D2;
-        }
-
-        .status-in-progress {
-            background: #FFF3E0;
-            color: #F57C00;
-        }
-
-        .status-completed {
-            background: #E8F5E8;
-            color: #2E7D32;
-        }
-
-        .status-rejected {
-            background: #FFEBEE;
-            color: #D32F2F;
-        }
-
-        .priority-badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .priority-low {
-            background: #E8F5E8;
-            color: #2E7D32;
-        }
-
-        .priority-medium {
-            background: #FFF3E0;
-            color: #F57C00;
-        }
-
-        .priority-high {
-            background: #FFEBEE;
-            color: #D32F2F;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            transition: var(--transition);
-            text-align: center;
-            justify-content: center;
-            white-space: nowrap;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background: #1B5E20;
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: var(--secondary-color);
-            color: var(--white);
-        }
-
-        .btn-secondary:hover {
-            background: #FF9800;
-        }
-
-        .btn-warning {
-            background: var(--warning-color);
-            color: var(--white);
-        }
-
-        .btn-warning:hover {
-            background: #F57C00;
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            color: var(--white);
-        }
-
-        .btn-success:hover {
-            background: #2E7D32;
-        }
-
-        .btn-sm {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.8rem;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            padding: 2rem;
-            overflow-y: auto;
-        }
-
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-content {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            background: var(--primary-color);
-            color: var(--white);
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--white);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .modal-footer {
-            padding: 1rem 2rem;
-            border-top: 1px solid var(--gray-light);
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-        }
-
-        /* Form styles */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-            outline: none;
-            font-family: inherit;
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* File upload */
-        .file-upload {
-            border: 2px dashed var(--gray-light);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .file-upload:hover {
-            border-color: var(--primary-color);
-            background: rgba(46, 125, 50, 0.05);
-        }
-
-        .file-upload.dragover {
-            border-color: var(--primary-color);
-            background: rgba(46, 125, 50, 0.1);
-        }
-
-        .uploaded-files {
-            margin-top: 1rem;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.5rem;
-            background: var(--background-color);
-            border-radius: var(--border-radius);
-            margin-bottom: 0.5rem;
-        }
-
-        .file-remove {
-            background: var(--error-color);
-            color: var(--white);
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        /* Comments */
-        .comments-section {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .comment {
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--gray-light);
-        }
-
-        .comment:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .comment-author {
-            font-weight: 500;
-            color: var(--primary-color);
-        }
-
-        .comment-date {
-            font-size: 0.8rem;
-            color: var(--gray-medium);
-        }
-
-        .comment-text {
-            color: var(--text-color);
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray-medium);
-        }
-
-        .empty-state .icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-container {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-                padding: 1rem;
-            }
-
-            .sidebar {
-                position: static;
-                order: 2;
-            }
-
-            .nav-container {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .requests-table {
-                font-size: 0.9rem;
-            }
-
-            .requests-table th,
-            .requests-table td {
-                padding: 0.75rem 0.5rem;
-            }
-
-            .btn-group {
-                flex-direction: column;
-            }
-
-            .modal {
-                padding: 1rem;
-            }
-        }
-
-        /* Page transitions */
-        .page-section {
-            display: none;
-        }
-
-        .page-section.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-icon">🌾</div>
-                АгроЗаявки
-            </a>
-            
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">М</div>
-                <div class="user-details">
-                    <h3 id="userName">Менеджер</h3>
-                    <p id="userRole">Менеджер</p>
-                </div>
-                <button class="logout-btn" onclick="logout()">Выйти</button>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Main container -->
-    <div class="main-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <h3>Навигация</h3>
-            <ul class="nav-menu">
-                <li><a href="#" class="nav-link active" data-page="dashboard">
-                    <span class="icon">🏠</span>Главная
-                </a></li>
-                <li><a href="#" class="nav-link" data-page="profile">
-                    <span class="icon">👤</span>Личные данные
-                </a></li>
-                <li><a href="#" class="nav-link" data-page="requests">
-                    <span class="icon">📋</span>Заявки на исполнении
-                </a></li>
-                <li><a href="#" class="nav-link" data-page="feedback">
-                    <span class="icon">💬</span>Обратная связь
-                </a></li>
-            </ul>
-        </aside>
-
-        <!-- Content area -->
-        <main class="content">
-            <!-- Dashboard section -->
-            <section id="dashboard" class="page-section active">
-                <div class="content-header">
-                    <h2>Панель менеджера</h2>
-                    <p>Управление заявками и обработка обращений</p>
-                </div>
-                
-                <div class="content-body">
-                    <!-- Statistics -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalAssignedRequests">0</div>
-                            <div class="stat-label">Назначено заявок</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="stat-number" id="pendingRequests">0</div>
-                            <div class="stat-label">В обработке</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="completedRequests">0</div>
-                            <div class="stat-label">Выполнено</div>
-                        </div>
-                        <div class="stat-card urgent">
-                            <div class="stat-number" id="urgentRequests">0</div>
-                            <div class="stat-label">Срочные</div>
-                        </div>
-                    </div>
-
-                    <!-- Recent requests -->
-                    <div class="recent-requests">
-                        <h3>Последние заявки</h3>
-                        <div id="recentRequestsContainer">
-                            <div class="empty-state">
-                                <div class="icon">📭</div>
-                                <h4>Заявок пока нет</h4>
-                                <p>Новые заявки появятся здесь</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Profile section -->
-            <section id="profile" class="page-section">
-                <div class="content-header">
-                    <h2>Личные данные</h2>
-                    <p>Управление информацией профиля</p>
-                </div>
-                
-                <div class="content-body">
-                    <form id="profileForm">
-                        <div class="form-group">
-                            <label for="profileFullName" class="form-label">ФИО</label>
-                            <input type="text" id="profileFullName" class="form-input" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profileLogin" class="form-label">Логин</label>
-                            <input type="text" id="profileLogin" class="form-input" disabled>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profilePhone" class="form-label">Телефон</label>
-                            <input type="tel" id="profilePhone" class="form-input" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profileEmail" class="form-label">Email</label>
-                            <input type="email" id="profileEmail" class="form-input" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="profileDepartment" class="form-label">Участок</label>
-                            <input type="text" id="profileDepartment" class="form-input" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="profilePosition" class="form-label">Должность</label>
-                            <input type="text" id="profilePosition" class="form-input" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="profilePositionCode" class="form-label">Код должности</label>
-                            <input type="text" id="profilePositionCode" class="form-input" required>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Requests section -->
-            <section id="requests" class="page-section">
-                <div class="content-header">
-                    <h2>Заявки на исполнении</h2>
-                    <p>Управление назначенными заявками</p>
-                </div>
-                
-                <div class="content-body">
-                    <!-- Filters -->
-                    <div class="filters">
-                        <div class="filter-group">
-                            <label class="filter-label">Статус</label>
-                            <select id="statusFilter" class="filter-select">
-                                <option value="">Все статусы</option>
-                                <option value="new">Новые</option>
-                                <option value="in_progress">В работе</option>
-                                <option value="completed">Выполненные</option>
-                            </select>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label class="filter-label">Приоритет</label>
-                            <select id="priorityFilter" class="filter-select">
-                                <option value="">Все приоритеты</option>
-                                <option value="high">Высокий</option>
-                                <option value="medium">Средний</option>
-                                <option value="low">Низкий</option>
-                            </select>
-                        </div>
-
-                        <div class="filter-group">
-                            <label class="filter-label">Дата</label>
-                            <select id="dateFilter" class="filter-select">
-                                <option value="">Все даты</option>
-                                <option value="today">Сегодня</option>
-                                <option value="week">Эта неделя</option>
-                                <option value="month">Этот месяц</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="requestsContainer">
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <h4>Нет назначенных заявок</h4>
-                            <p>Заявки появятся здесь после назначения</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Feedback section -->
-            <section id="feedback" class="page-section">
-                <div class="content-header">
-                    <h2>Обратная связь</h2>
-                    <p>Вопросы от пользователей и ответы</p>
-                </div>
-                
-                <div class="content-body">
-                    <div id="feedbackContainer">
-                        <div class="empty-state">
-                            <div class="icon">💬</div>
-                            <h4>Нет сообщений</h4>
-                            <p>Новые вопросы от пользователей появятся здесь</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Личный кабинет менеджера - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/dashboard-manager.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <!-- Header -->
+  <header class="header">
+   <nav class="nav-container">
+    <a class="logo" href="index.html">
+     <div class="logo-icon">
+      🌾
+     </div>
+     АгроЗаявки
+    </a>
+    <div class="user-info">
+     <div class="user-avatar" id="userAvatar">
+      М
+     </div>
+     <div class="user-details">
+      <h3 id="userName">
+       Менеджер
+      </h3>
+      <p id="userRole">
+       Менеджер
+      </p>
+     </div>
+     <button class="logout-btn" onclick="logout()">
+      Выйти
+     </button>
     </div>
-
-    <!-- Request Modal -->
-    <div id="requestModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Обработка заявки</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="requestDetails"></div>
-                
-                <div class="form-group">
-                    <label for="requestStatus" class="form-label">Статус</label>
-                    <select id="requestStatus" class="form-select">
-                        <option value="new">Новая</option>
-                        <option value="in_progress">В работе</option>
-                        <option value="completed">Выполнена</option>
-                        <option value="rejected">Отклонена</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="newComment" class="form-label">Комментарий</label>
-                    <textarea id="newComment" class="form-textarea" placeholder="Добавить комментарий..."></textarea>
-                </div>
-
-                <div class="form-group" id="fileUploadGroup" style="display: none;">
-                    <label class="form-label">Загрузить отчетные материалы</label>
-                    <div class="file-upload" id="fileUpload">
-                        <p>Перетащите файлы сюда или нажмите для выбора</p>
-                        <input type="file" id="fileInput" multiple style="display: none;">
-                    </div>
-                    <div class="uploaded-files" id="uploadedFiles"></div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Комментарии</label>
-                    <div class="comments-section" id="commentsSection"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
-                <button class="btn btn-primary" onclick="saveRequest()">Сохранить</button>
-            </div>
+   </nav>
+  </header>
+  <!-- Main container -->
+  <div class="main-container">
+   <!-- Sidebar -->
+   <aside class="sidebar">
+    <h3>
+     Навигация
+    </h3>
+    <ul class="nav-menu">
+     <li>
+      <a class="nav-link active" data-page="dashboard" href="#">
+       <span class="icon">
+        🏠
+       </span>
+       Главная
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="profile" href="#">
+       <span class="icon">
+        👤
+       </span>
+       Личные данные
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="requests" href="#">
+       <span class="icon">
+        📋
+       </span>
+       Заявки на исполнении
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="feedback" href="#">
+       <span class="icon">
+        💬
+       </span>
+       Обратная связь
+      </a>
+     </li>
+    </ul>
+   </aside>
+   <!-- Content area -->
+   <main class="content">
+    <!-- Dashboard section -->
+    <section class="page-section active" id="dashboard">
+     <div class="content-header">
+      <h2>
+       Панель менеджера
+      </h2>
+      <p>
+       Управление заявками и обработка обращений
+      </p>
+     </div>
+     <div class="content-body">
+      <!-- Statistics -->
+      <div class="stats-grid">
+       <div class="stat-card">
+        <div class="stat-number" id="totalAssignedRequests">
+         0
         </div>
+        <div class="stat-label">
+         Назначено заявок
+        </div>
+       </div>
+       <div class="stat-card warning">
+        <div class="stat-number" id="pendingRequests">
+         0
+        </div>
+        <div class="stat-label">
+         В обработке
+        </div>
+       </div>
+       <div class="stat-card">
+        <div class="stat-number" id="completedRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Выполнено
+        </div>
+       </div>
+       <div class="stat-card urgent">
+        <div class="stat-number" id="urgentRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Срочные
+        </div>
+       </div>
+      </div>
+      <!-- Recent requests -->
+      <div class="recent-requests">
+       <h3>
+        Последние заявки
+       </h3>
+       <div id="recentRequestsContainer">
+        <div class="empty-state">
+         <div class="icon">
+          📭
+         </div>
+         <h4>
+          Заявок пока нет
+         </h4>
+         <p>
+          Новые заявки появятся здесь
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Profile section -->
+    <section class="page-section" id="profile">
+     <div class="content-header">
+      <h2>
+       Личные данные
+      </h2>
+      <p>
+       Управление информацией профиля
+      </p>
+     </div>
+     <div class="content-body">
+      <form id="profileForm">
+       <div class="form-group">
+        <label class="form-label" for="profileFullName">
+         ФИО
+        </label>
+        <input class="form-input" id="profileFullName" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileLogin">
+         Логин
+        </label>
+        <input class="form-input" disabled="" id="profileLogin" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profilePhone">
+         Телефон
+        </label>
+        <input class="form-input" id="profilePhone" required="" type="tel"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileEmail">
+         Email
+        </label>
+        <input class="form-input" id="profileEmail" required="" type="email"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileDepartment">
+         Участок
+        </label>
+        <input class="form-input" id="profileDepartment" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profilePosition">
+         Должность
+        </label>
+        <input class="form-input" id="profilePosition" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profilePositionCode">
+         Код должности
+        </label>
+        <input class="form-input" id="profilePositionCode" required="" type="text"/>
+       </div>
+       <button class="btn btn-primary" type="submit">
+        Сохранить изменения
+       </button>
+      </form>
+     </div>
+    </section>
+    <!-- Requests section -->
+    <section class="page-section" id="requests">
+     <div class="content-header">
+      <h2>
+       Заявки на исполнении
+      </h2>
+      <p>
+       Управление назначенными заявками
+      </p>
+     </div>
+     <div class="content-body">
+      <!-- Filters -->
+      <div class="filters">
+       <div class="filter-group">
+        <label class="filter-label">
+         Статус
+        </label>
+        <select class="filter-select" id="statusFilter">
+         <option value="">
+          Все статусы
+         </option>
+         <option value="new">
+          Новые
+         </option>
+         <option value="in_progress">
+          В работе
+         </option>
+         <option value="completed">
+          Выполненные
+         </option>
+        </select>
+       </div>
+       <div class="filter-group">
+        <label class="filter-label">
+         Приоритет
+        </label>
+        <select class="filter-select" id="priorityFilter">
+         <option value="">
+          Все приоритеты
+         </option>
+         <option value="high">
+          Высокий
+         </option>
+         <option value="medium">
+          Средний
+         </option>
+         <option value="low">
+          Низкий
+         </option>
+        </select>
+       </div>
+       <div class="filter-group">
+        <label class="filter-label">
+         Дата
+        </label>
+        <select class="filter-select" id="dateFilter">
+         <option value="">
+          Все даты
+         </option>
+         <option value="today">
+          Сегодня
+         </option>
+         <option value="week">
+          Эта неделя
+         </option>
+         <option value="month">
+          Этот месяц
+         </option>
+        </select>
+       </div>
+      </div>
+      <div id="requestsContainer">
+       <div class="empty-state">
+        <div class="icon">
+         📭
+        </div>
+        <h4>
+         Нет назначенных заявок
+        </h4>
+        <p>
+         Заявки появятся здесь после назначения
+        </p>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Feedback section -->
+    <section class="page-section" id="feedback">
+     <div class="content-header">
+      <h2>
+       Обратная связь
+      </h2>
+      <p>
+       Вопросы от пользователей и ответы
+      </p>
+     </div>
+     <div class="content-body">
+      <div id="feedbackContainer">
+       <div class="empty-state">
+        <div class="icon">
+         💬
+        </div>
+        <h4>
+         Нет сообщений
+        </h4>
+        <p>
+         Новые вопросы от пользователей появятся здесь
+        </p>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+  <!-- Request Modal -->
+  <div class="modal" id="requestModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h3>
+      Обработка заявки
+     </h3>
+     <button class="modal-close" onclick="closeModal()">
+      ×
+     </button>
     </div>
-
-    <script>
-        // Система управления дашбордом менеджера
-        class ManagerDashboard {
-            constructor() {
-                this.currentUser = null;
-                this.assignedRequests = [];
-                this.currentRequest = null;
-                this.uploadedFiles = [];
-                this.init();
-            }
-
-            init() {
-                this.checkAuth();
-                this.loadUserData();
-                this.loadAssignedRequests();
-                this.updateStats();
-                this.initNavigation();
-                this.initForms();
-                this.initFileUpload();
-                this.renderRecentRequests();
-                this.initFilters();
-            }
-
-            // Проверка авторизации
-            checkAuth() {
-                try {
-                    const session = JSON.parse(localStorage.getItem('currentSession') || 'null');
-                    
-                    if (!session || new Date(session.expiresAt) <= new Date()) {
-                        window.location.href = 'login.html';
-                        return;
-                    }
-
-                    if (session.role !== 'manager') {
-                        const dashboards = {
-                            'user': 'dashboard-user.html',
-                            'admin': 'dashboard-admin.html'
-                        };
-                        if (dashboards[session.role]) {
-                            window.location.href = dashboards[session.role];
-                        }
-                        return;
-                    }
-
-                    this.currentUser = session;
-                } catch (error) {
-                    window.location.href = 'login.html';
-                }
-            }
-
-            // Загрузка данных пользователя
-            loadUserData() {
-                if (!this.currentUser) return;
-
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const user = users.find(u => u.id === this.currentUser.userId);
-                
-                if (user) {
-                    // Обновляем информацию в шапке
-                    document.getElementById('userName').textContent = user.fullName;
-                    document.getElementById('userRole').textContent = 'Менеджер';
-                    document.getElementById('userAvatar').textContent = user.fullName.charAt(0).toUpperCase();
-
-                    // Заполняем форму профиля
-                    document.getElementById('profileFullName').value = user.fullName;
-                    document.getElementById('profileLogin').value = user.login;
-                    document.getElementById('profilePhone').value = user.phone;
-                    document.getElementById('profileEmail').value = user.email;
-                    
-                    if (user.additionalFields) {
-                        document.getElementById('profileDepartment').value = user.additionalFields.department || '';
-                        document.getElementById('profilePosition').value = user.additionalFields.position || '';
-                        document.getElementById('profilePositionCode').value = user.additionalFields.positionCode || '';
-                    }
-                }
-            }
-
-            // Загрузка назначенных заявок
-            loadAssignedRequests() {
-                try {
-                    const allRequests = JSON.parse(localStorage.getItem('requests') || '[]');
-                    // Для демо назначаем все новые заявки текущему менеджеру
-                    this.assignedRequests = allRequests.filter(req => 
-                        req.managerId === this.currentUser.userId || req.status === 'new'
-                    );
-
-                    // Назначаем новые заявки автоматически
-                    allRequests.forEach(req => {
-                        if (req.status === 'new' && !req.managerId) {
-                            req.managerId = this.currentUser.userId;
-                        }
-                    });
-
-                    localStorage.setItem('requests', JSON.stringify(allRequests));
-                    this.assignedRequests = allRequests.filter(req => req.managerId === this.currentUser.userId);
-                } catch (error) {
-                    this.assignedRequests = [];
-                }
-            }
-
-            // Обновление статистики
-            updateStats() {
-                const total = this.assignedRequests.length;
-                const pending = this.assignedRequests.filter(req => 
-                    ['new', 'in_progress'].includes(req.status)
-                ).length;
-                const completed = this.assignedRequests.filter(req => 
-                    req.status === 'completed'
-                ).length;
-                const urgent = this.assignedRequests.filter(req => 
-                    req.priority === 'high' && req.status !== 'completed'
-                ).length;
-
-                document.getElementById('totalAssignedRequests').textContent = total;
-                document.getElementById('pendingRequests').textContent = pending;
-                document.getElementById('completedRequests').textContent = completed;
-                document.getElementById('urgentRequests').textContent = urgent;
-            }
-
-            // Инициализация навигации
-            initNavigation() {
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const page = link.getAttribute('data-page');
-                        if (page) {
-                            this.showPage(page);
-                        }
-                    });
-                });
-            }
-
-            // Показ страницы
-            showPage(pageId) {
-                document.querySelectorAll('.page-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-
-                const targetPage = document.getElementById(pageId);
-                if (targetPage) {
-                    targetPage.classList.add('active');
-                }
-
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active');
-                });
-
-                const activeLink = document.querySelector(`[data-page="${pageId}"]`);
-                if (activeLink && activeLink.classList.contains('nav-link')) {
-                    activeLink.classList.add('active');
-                }
-
-                if (pageId === 'requests') {
-                    this.renderAllRequests();
-                }
-            }
-
-            // Инициализация форм
-            initForms() {
-                document.getElementById('profileForm').addEventListener('submit', (e) => {
-                    this.handleProfileUpdate(e);
-                });
-
-                document.getElementById('requestStatus').addEventListener('change', (e) => {
-                    const fileUploadGroup = document.getElementById('fileUploadGroup');
-                    if (e.target.value === 'completed') {
-                        fileUploadGroup.style.display = 'block';
-                    } else {
-                        fileUploadGroup.style.display = 'none';
-                    }
-                });
-            }
-
-            // Инициализация загрузки файлов
-            initFileUpload() {
-                const fileUpload = document.getElementById('fileUpload');
-                const fileInput = document.getElementById('fileInput');
-
-                fileUpload.addEventListener('click', () => fileInput.click());
-                fileInput.addEventListener('change', (e) => this.handleFileSelect(e.target.files));
-
-                // Drag & Drop
-                fileUpload.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    fileUpload.classList.add('dragover');
-                });
-
-                fileUpload.addEventListener('dragleave', () => {
-                    fileUpload.classList.remove('dragover');
-                });
-
-                fileUpload.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    fileUpload.classList.remove('dragover');
-                    this.handleFileSelect(e.dataTransfer.files);
-                });
-            }
-
-            // Инициализация фильтров
-            initFilters() {
-                ['statusFilter', 'priorityFilter', 'dateFilter'].forEach(filterId => {
-                    document.getElementById(filterId).addEventListener('change', () => {
-                        this.renderAllRequests();
-                    });
-                });
-            }
-
-            // Обработка файлов
-            handleFileSelect(files) {
-                Array.from(files).forEach(file => {
-                    if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                        this.showNotification('Файл слишком большой (максимум 10MB)', 'error');
-                        return;
-                    }
-
-                    this.uploadedFiles.push({
-                        name: file.name,
-                        size: file.size,
-                        type: file.type,
-                        data: file
-                    });
-                });
-
-                this.renderUploadedFiles();
-            }
-
-            // Отображение загруженных файлов
-            renderUploadedFiles() {
-                const container = document.getElementById('uploadedFiles');
-                container.innerHTML = this.uploadedFiles.map((file, index) => `
-                    <div class="file-item">
-                        <span>${file.name} (${this.formatFileSize(file.size)})</span>
-                        <button class="file-remove" onclick="managerDashboard.removeFile(${index})">×</button>
-                    </div>
-                `).join('');
-            }
-
-            // Удаление файла
-            removeFile(index) {
-                this.uploadedFiles.splice(index, 1);
-                this.renderUploadedFiles();
-            }
-
-            // Форматирование размера файла
-            formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-
-            // Обработка обновления профиля
-            handleProfileUpdate(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(e.target);
-                const updatedData = {
-                    fullName: formData.get('profileFullName'),
-                    phone: formData.get('profilePhone'),
-                    email: formData.get('profileEmail'),
-                    additionalFields: {
-                        department: formData.get('profileDepartment'),
-                        position: formData.get('profilePosition'),
-                        positionCode: formData.get('profilePositionCode')
-                    }
-                };
-
-                try {
-                    const users = JSON.parse(localStorage.getItem('users') || '[]');
-                    const userIndex = users.findIndex(u => u.id === this.currentUser.userId);
-                    
-                    if (userIndex !== -1) {
-                        users[userIndex] = { ...users[userIndex], ...updatedData, updatedAt: new Date().toISOString() };
-                        localStorage.setItem('users', JSON.stringify(users));
-                        
-                        this.currentUser.fullName = updatedData.fullName;
-                        localStorage.setItem('currentSession', JSON.stringify(this.currentUser));
-                        
-                        this.loadUserData();
-                        this.showNotification('Профиль успешно обновлен', 'success');
-                    }
-                } catch (error) {
-                    this.showNotification('Ошибка при обновлении профиля', 'error');
-                }
-            }
-
-            // Отображение последних заявок
-            renderRecentRequests() {
-                const container = document.getElementById('recentRequestsContainer');
-                const recentRequests = this.assignedRequests
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                    .slice(0, 5);
-
-                if (recentRequests.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <h4>Заявок пока нет</h4>
-                            <p>Новые заявки появятся здесь</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = `
-                        <table class="requests-table">
-                            <thead>
-                                <tr>
-                                    <th>Заголовок</th>
-                                    <th>Приоритет</th>
-                                    <th>Статус</th>
-                                    <th>Дата</th>
-                                    <th>Действия</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${recentRequests.map(req => `
-                                    <tr>
-                                        <td><strong>${req.title}</strong></td>
-                                        <td><span class="priority-badge priority-${req.priority}">${this.getPriorityName(req.priority)}</span></td>
-                                        <td><span class="status-badge status-${req.status}">${this.getStatusName(req.status)}</span></td>
-                                        <td>${new Date(req.createdAt).toLocaleDateString('ru-RU')}</td>
-                                        <td>
-                                            <button class="btn btn-primary btn-sm" onclick="managerDashboard.openRequestModal('${req.id}')">
-                                                Обработать
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                }
-            }
-
-            // Отображение всех заявок с фильтрацией
-            renderAllRequests() {
-                const container = document.getElementById('requestsContainer');
-                
-                // Применяем фильтры
-                let filteredRequests = [...this.assignedRequests];
-                
-                const statusFilter = document.getElementById('statusFilter').value;
-                if (statusFilter) {
-                    filteredRequests = filteredRequests.filter(req => req.status === statusFilter);
-                }
-
-                const priorityFilter = document.getElementById('priorityFilter').value;
-                if (priorityFilter) {
-                    filteredRequests = filteredRequests.filter(req => req.priority === priorityFilter);
-                }
-
-                const dateFilter = document.getElementById('dateFilter').value;
-                if (dateFilter) {
-                    const now = new Date();
-                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                    
-                    filteredRequests = filteredRequests.filter(req => {
-                        const reqDate = new Date(req.createdAt);
-                        switch (dateFilter) {
-                            case 'today':
-                                return reqDate >= today;
-                            case 'week':
-                                const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-                                return reqDate >= weekAgo;
-                            case 'month':
-                                const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-                                return reqDate >= monthAgo;
-                            default:
-                                return true;
-                        }
-                    });
-                }
-
-                if (filteredRequests.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <h4>Нет заявок по выбранным фильтрам</h4>
-                            <p>Попробуйте изменить критерии поиска</p>
-                        </div>
-                    `;
-                } else {
-                    const sortedRequests = filteredRequests.sort((a, b) => {
-                        // Сортировка: сначала новые и в работе, потом по приоритету, потом по дате
-                        const statusOrder = { 'new': 0, 'in_progress': 1, 'completed': 2, 'rejected': 3 };
-                        const priorityOrder = { 'high': 0, 'medium': 1, 'low': 2 };
-                        
-                        if (statusOrder[a.status] !== statusOrder[b.status]) {
-                            return statusOrder[a.status] - statusOrder[b.status];
-                        }
-                        
-                        if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
-                            return priorityOrder[a.priority] - priorityOrder[b.priority];
-                        }
-                        
-                        return new Date(b.createdAt) - new Date(a.createdAt);
-                    });
-
-                    container.innerHTML = `
-                        <table class="requests-table">
-                            <thead>
-                                <tr>
-                                    <th>Заголовок</th>
-                                    <th>Категория</th>
-                                    <th>Приоритет</th>
-                                    <th>Статус</th>
-                                    <th>Дата создания</th>
-                                    <th>Действия</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${sortedRequests.map(req => `
-                                    <tr>
-                                        <td><strong>${req.title}</strong></td>
-                                        <td>${this.getCategoryName(req.category)}</td>
-                                        <td><span class="priority-badge priority-${req.priority}">${this.getPriorityName(req.priority)}</span></td>
-                                        <td><span class="status-badge status-${req.status}">${this.getStatusName(req.status)}</span></td>
-                                        <td>${new Date(req.createdAt).toLocaleDateString('ru-RU')}</td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <button class="btn btn-primary btn-sm" onclick="managerDashboard.openRequestModal('${req.id}')">
-                                                    Обработать
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
-                }
-            }
-
-            // Открытие модального окна заявки
-            openRequestModal(requestId) {
-                const request = this.assignedRequests.find(req => req.id === requestId);
-                if (!request) return;
-
-                this.currentRequest = request;
-                this.uploadedFiles = [];
-
-                // Заполняем детали заявки
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const user = users.find(u => u.id === request.userId);
-                
-                document.getElementById('requestDetails').innerHTML = `
-                    <div style="margin-bottom: 1.5rem; padding: 1rem; background: var(--background-color); border-radius: var(--border-radius);">
-                        <h4>${request.title}</h4>
-                        <p><strong>Категория:</strong> ${this.getCategoryName(request.category)}</p>
-                        <p><strong>Приоритет:</strong> ${this.getPriorityName(request.priority)}</p>
-                        <p><strong>Заявитель:</strong> ${user ? user.fullName : 'Неизвестно'}</p>
-                        <p><strong>Дата создания:</strong> ${new Date(request.createdAt).toLocaleDateString('ru-RU')}</p>
-                        <p><strong>Описание:</strong></p>
-                        <p style="white-space: pre-wrap;">${request.description}</p>
-                    </div>
-                `;
-
-                // Устанавливаем текущий статус
-                document.getElementById('requestStatus').value = request.status;
-
-                // Показываем/скрываем загрузку файлов
-                const fileUploadGroup = document.getElementById('fileUploadGroup');
-                fileUploadGroup.style.display = request.status === 'completed' ? 'block' : 'none';
-
-                // Загружаем комментарии
-                this.renderComments();
-
-                // Показываем модальное окно
-                document.getElementById('requestModal').classList.add('show');
-            }
-
-            // Отображение комментариев
-            renderComments() {
-                const container = document.getElementById('commentsSection');
-                const comments = this.currentRequest.comments || [];
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-
-                if (comments.length === 0) {
-                    container.innerHTML = '<p style="color: var(--gray-medium); text-align: center;">Нет комментариев</p>';
-                } else {
-                    container.innerHTML = comments.map(comment => {
-                        const user = users.find(u => u.id === comment.userId);
-                        return `
-                            <div class="comment">
-                                <div class="comment-header">
-                                    <span class="comment-author">${user ? user.fullName : 'Неизвестно'}</span>
-                                    <span class="comment-date">${new Date(comment.createdAt).toLocaleString('ru-RU')}</span>
-                                </div>
-                                <div class="comment-text">${comment.message}</div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-            }
-
-            // Сохранение заявки
-            saveRequest() {
-                const status = document.getElementById('requestStatus').value;
-                const comment = document.getElementById('newComment').value.trim();
-
-                try {
-                    const allRequests = JSON.parse(localStorage.getItem('requests') || '[]');
-                    const requestIndex = allRequests.findIndex(req => req.id === this.currentRequest.id);
-                    
-                    if (requestIndex === -1) {
-                        this.showNotification('Заявка не найдена', 'error');
-                        return;
-                    }
-
-                    // Обновляем статус
-                    allRequests[requestIndex].status = status;
-                    allRequests[requestIndex].updatedAt = new Date().toISOString();
-
-                    if (status === 'completed') {
-                        allRequests[requestIndex].completedAt = new Date().toISOString();
-                    }
-
-                    // Добавляем комментарий
-                    if (comment) {
-                        if (!allRequests[requestIndex].comments) {
-                            allRequests[requestIndex].comments = [];
-                        }
-
-                        allRequests[requestIndex].comments.push({
-                            id: this.generateId(),
-                            userId: this.currentUser.userId,
-                            message: comment,
-                            type: 'manager',
-                            createdAt: new Date().toISOString()
-                        });
-                    }
-
-                    // Добавляем файлы
-                    if (this.uploadedFiles.length > 0) {
-                        if (!allRequests[requestIndex].files) {
-                            allRequests[requestIndex].files = [];
-                        }
-
-                        this.uploadedFiles.forEach(file => {
-                            allRequests[requestIndex].files.push({
-                                name: file.name,
-                                size: file.size,
-                                type: file.type,
-                                uploadedBy: this.currentUser.userId,
-                                uploadedAt: new Date().toISOString()
-                            });
-                        });
-                    }
-
-                    localStorage.setItem('requests', JSON.stringify(allRequests));
-                    
-                    this.loadAssignedRequests();
-                    this.updateStats();
-                    this.renderRecentRequests();
-                    this.renderAllRequests();
-
-                    this.showNotification('Заявка успешно обновлена', 'success');
-                    this.closeModal();
-
-                } catch (error) {
-                    this.showNotification('Ошибка при сохранении заявки', 'error');
-                }
-            }
-
-            // Закрытие модального окна
-            closeModal() {
-                document.getElementById('requestModal').classList.remove('show');
-                document.getElementById('newComment').value = '';
-                this.uploadedFiles = [];
-                this.renderUploadedFiles();
-                this.currentRequest = null;
-            }
-
-            // Утилиты
-            generateId() {
-                return 'comment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            }
-
-            getCategoryName(category) {
-                const categories = {
-                    'maintenance': 'Техобслуживание',
-                    'repair': 'Ремонт',
-                    'supply': 'Поставка',
-                    'consultation': 'Консультация',
-                    'other': 'Другое'
-                };
-                return categories[category] || category;
-            }
-
-            getPriorityName(priority) {
-                const priorities = {
-                    'low': 'Низкий',
-                    'medium': 'Средний',
-                    'high': 'Высокий'
-                };
-                return priorities[priority] || priority;
-            }
-
-            getStatusName(status) {
-                const statuses = {
-                    'new': 'Новая',
-                    'in_progress': 'В работе',
-                    'completed': 'Выполнена',
-                    'rejected': 'Отклонена'
-                };
-                return statuses[status] || status;
-            }
-
-            showNotification(message, type = 'success') {
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.textContent = message;
-                notification.style.position = 'fixed';
-                notification.style.top = '2rem';
-                notification.style.right = '2rem';
-                notification.style.padding = '1rem 1.5rem';
-                notification.style.borderRadius = 'var(--border-radius)';
-                notification.style.color = 'var(--white)';
-                notification.style.fontWeight = '500';
-                notification.style.boxShadow = 'var(--shadow)';
-                notification.style.zIndex = '1000';
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                notification.style.transition = 'all 0.3s ease';
-                notification.style.background = type === 'success' ? 'var(--success-color)' : 'var(--error-color)';
-
-                document.body.appendChild(notification);
-
-                setTimeout(() => {
-                    notification.style.opacity = '1';
-                    notification.style.transform = 'translateX(0)';
-                }, 100);
-
-                setTimeout(() => {
-                    notification.style.opacity = '0';
-                    notification.style.transform = 'translateX(100%)';
-                    setTimeout(() => {
-                        document.body.removeChild(notification);
-                    }, 300);
-                }, 4000);
-            }
-        }
-
-        // Глобальные функции
-        function logout() {
-            localStorage.removeItem('currentSession');
-            sessionStorage.removeItem('isLoggedIn');
-            window.location.href = 'login.html';
-        }
-
-        function closeModal() {
-            managerDashboard.closeModal();
-        }
-
-        function saveRequest() {
-            managerDashboard.saveRequest();
-        }
-
-        // Инициализация
-        let managerDashboard;
-        document.addEventListener('DOMContentLoaded', () => {
-            managerDashboard = new ManagerDashboard();
-        });
-    </script>
-</body>
+    <div class="modal-body">
+     <div id="requestDetails">
+     </div>
+     <div class="form-group">
+      <label class="form-label" for="requestStatus">
+       Статус
+      </label>
+      <select class="form-select" id="requestStatus">
+       <option value="new">
+        Новая
+       </option>
+       <option value="in_progress">
+        В работе
+       </option>
+       <option value="completed">
+        Выполнена
+       </option>
+       <option value="rejected">
+        Отклонена
+       </option>
+      </select>
+     </div>
+     <div class="form-group">
+      <label class="form-label" for="newComment">
+       Комментарий
+      </label>
+      <textarea class="form-textarea" id="newComment" placeholder="Добавить комментарий..."></textarea>
+     </div>
+     <div class="form-group" id="fileUploadGroup" style="display: none;">
+      <label class="form-label">
+       Загрузить отчетные материалы
+      </label>
+      <div class="file-upload" id="fileUpload">
+       <p>
+        Перетащите файлы сюда или нажмите для выбора
+       </p>
+       <input id="fileInput" multiple="" style="display: none;" type="file"/>
+      </div>
+      <div class="uploaded-files" id="uploadedFiles">
+      </div>
+     </div>
+     <div class="form-group">
+      <label class="form-label">
+       Комментарии
+      </label>
+      <div class="comments-section" id="commentsSection">
+      </div>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button class="btn btn-secondary" onclick="closeModal()">
+      Отмена
+     </button>
+     <button class="btn btn-primary" onclick="saveRequest()">
+      Сохранить
+     </button>
+    </div>
+   </div>
+  </div>
+  <script src="js/common.js">
+  </script>
+  <script src="js/dashboard-manager.js">
+  </script>
+ </body>
 </html>
