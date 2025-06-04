@@ -4,17 +4,35 @@
 
 // Блок скриптов #1
 let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
 
-        function showSlide(n) {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (n + totalSlides) % totalSlides;
-            slides[currentSlide].classList.add('active');
-            
-            // Обновляем счетчик
-            document.querySelector('.slide.active .slide-counter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+function updateSlideCounter() {
+    const activeSlide = document.querySelector('.slide.active');
+    if (activeSlide) {
+        const counter = activeSlide.querySelector('.slide-counter');
+        if (counter) {
+            counter.textContent = `${currentSlide + 1} / ${totalSlides}`;
         }
+    }
+}
+
+function showSlide(n) {
+    // Убираем active с текущего слайда
+    slides[currentSlide].classList.remove('active');
+    
+    // Вычисляем новый индекс слайда
+    currentSlide = (n + totalSlides) % totalSlides;
+    
+    // Добавляем active к новому слайду
+    slides[currentSlide].classList.add('active');
+    
+    // Обновляем счетчик
+    updateSlideCounter();
+    
+    // Обновляем индикаторы
+    updateIndicators();
+}
 
         function nextSlide() {
             showSlide(currentSlide + 1);
@@ -74,40 +92,46 @@ let currentSlide = 0;
             
             startX = null;
             startY = null;
-        });
-
-        // Добавляем индикаторы слайдов
+        });        // Добавляем индикаторы слайдов
+        let indicators = null;
+        
+        function updateIndicators() {
+            if (indicators) {
+                Array.from(indicators.children).forEach((dot, index) => {
+                    dot.style.backgroundColor = index === currentSlide ? 'var(--primary-color)' : 'var(--gray-light)';
+                });
+            }
+        }
+        
         function createSlideIndicators() {
             const navigation = document.querySelector('.navigation');
-            const indicators = document.createElement('div');
+            if (!navigation) return;
+            
+            indicators = document.createElement('div');
+            indicators.className = 'slide-indicators';
             indicators.style.display = 'flex';
             indicators.style.gap = '0.5rem';
             indicators.style.margin = '0 1rem';
+            indicators.style.alignItems = 'center';
             
             for (let i = 0; i < totalSlides; i++) {
                 const dot = document.createElement('div');
-                dot.style.width = '8px';
-                dot.style.height = '8px';
+                dot.className = 'indicator-dot';
+                dot.style.width = '10px';
+                dot.style.height = '10px';
                 dot.style.borderRadius = '50%';
                 dot.style.backgroundColor = i === 0 ? 'var(--primary-color)' : 'var(--gray-light)';
                 dot.style.cursor = 'pointer';
+                dot.style.transition = 'all 0.3s ease';
                 dot.addEventListener('click', () => showSlide(i));
                 indicators.appendChild(dot);
             }
             
-            navigation.insertBefore(indicators, navigation.children[1]);
-            
-            // Обновляем индикаторы при смене слайда
-            const originalShowSlide = showSlide;
-            showSlide = function(n) {
-                originalShowSlide.call(this, n);
-                indicators.children.forEach((dot, index) => {
-                    dot.style.backgroundColor = index === currentSlide ? 'var(--primary-color)' : 'var(--gray-light)';
-                });
-            };
-        }
-
-        // Инициализация
+            // Вставляем индикаторы между кнопками
+            const nextBtn = navigation.querySelector('.nav-btn.primary');
+            navigation.insertBefore(indicators, nextBtn);
+        }        // Инициализация
         document.addEventListener('DOMContentLoaded', function() {
             createSlideIndicators();
+            updateSlideCounter();
         });

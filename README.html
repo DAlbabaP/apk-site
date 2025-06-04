@@ -862,6 +862,140 @@
      </div>
     </div>
    </section>
+   <!-- API для товаров и наборов -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      🛠️ API для управления товарами и наборами
+     </h2>
+     <p>
+      REST API для регистрации, редактирования, удаления товаров и наборов с учетом совместимости. Требуется аутентификация через Bearer Token.
+     </p>
+    </div>
+    <div class="section-body">
+     <h4>
+      Базовый URL
+     </h4>
+     <pre>
+/api/
+</pre>
+     <h4>
+      Аутентификация
+     </h4>
+     <ul>
+      <li>
+       Заголовок:
+       <code>
+        Authorization: Bearer demo_token
+       </code>
+      </li>
+      <li>
+       Без токена — 401 Unauthorized, неверный токен — 403 Forbidden
+      </li>
+     </ul>
+     <h4>
+      Эндпоинты
+     </h4>
+     <ul>
+      <li>
+       <b>
+        GET /api/products
+       </b>
+       — список товаров
+      </li>
+      <li>
+       <b>
+        POST /api/products
+       </b>
+       — добавить товар (JSON: name, category, storage_temp, storage_humidity, shelf_life, seasonality, packaging, special_care, description)
+      </li>
+      <li>
+       <b>
+        PUT /api/products?id=ID
+       </b>
+       — обновить товар
+      </li>
+      <li>
+       <b>
+        DELETE /api/products?id=ID
+       </b>
+       — удалить товар
+      </li>
+      <li>
+       <b>
+        GET /api/sets
+       </b>
+       — список наборов
+      </li>
+      <li>
+       <b>
+        POST /api/sets
+       </b>
+       — создать набор (JSON: name, type, description, products[ID,ID,...])
+      </li>
+      <li>
+       <b>
+        PUT /api/sets?id=ID
+       </b>
+       — обновить набор
+      </li>
+      <li>
+       <b>
+        DELETE /api/sets?id=ID
+       </b>
+       — удалить набор
+      </li>
+     </ul>
+     <h4>
+      Проверка совместимости
+     </h4>
+     <ul>
+      <li>
+       При создании/редактировании набора система проверяет: условия хранения, срок годности, сезонность, упаковку, особые условия.
+      </li>
+      <li>
+       В случае несовместимости возвращается 400 и детали ошибок.
+      </li>
+     </ul>
+     <h4>
+      Пример запроса
+     </h4>
+     <pre>
+curl -X POST http://localhost/api/products \
+  -H "Authorization: Bearer demo_token" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Пшеница","category":"seeds", ...}'
+</pre>
+     <h4>
+      Структура таблиц MySQL
+     </h4>
+     <pre>
+CREATE TABLE products (
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ name VARCHAR(255),
+ category VARCHAR(50),
+ storage_temp INT,
+ storage_humidity INT,
+ shelf_life INT,
+ seasonality VARCHAR(20),
+ packaging VARCHAR(20),
+ special_care VARCHAR(20),
+ description TEXT
+);
+CREATE TABLE sets (
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ name VARCHAR(255),
+ type VARCHAR(50),
+ description TEXT
+);
+CREATE TABLE set_products (
+ set_id INT,
+ product_id INT,
+ PRIMARY KEY (set_id, product_id)
+);
+</pre>
+    </div>
+   </section>
   </div>
   <script src="js/common.js">
   </script>
