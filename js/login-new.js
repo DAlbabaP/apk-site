@@ -38,10 +38,10 @@ class AuthSystem {
             if (!credentials.login || !credentials.password) {
                 this.showError('Заполните все поля');
                 return;
-            }            // Авторизация через API
-            console.log('Attempting login with:', credentials);
+            }
+
+            // Авторизация через API
             const response = await AuthManager.login(credentials);
-            console.log('Login response:', response);
             
             this.showNotification('Вход выполнен успешно! Перенаправление...', 'success');
             
@@ -67,23 +67,23 @@ class AuthSystem {
         };
         
         window.location.href = dashboards[role] || 'dashboard-user.html';
-    }    // Показать ошибку
+    }
+
+    // Показать ошибку
     showError(message) {
-        const errorDiv = document.getElementById('loginError');
+        const errorDiv = document.getElementById('error-message');
         if (errorDiv) {
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
-            errorDiv.classList.add('show');
         }
     }
 
     // Скрыть ошибку
     hideError() {
-        const errorDiv = document.getElementById('loginError');
+        const errorDiv = document.getElementById('error-message');
         if (errorDiv) {
             errorDiv.style.display = 'none';
             errorDiv.textContent = '';
-            errorDiv.classList.remove('show');
         }
     }
 
@@ -110,12 +110,6 @@ function quickLogin(role) {
 
 // Инициализация системы авторизации
 document.addEventListener('DOMContentLoaded', () => {
-    // Очищаем старые данные из localStorage
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('current_user');
-    localStorage.removeItem('currentSession'); // старый ключ
-    localStorage.removeItem('users'); // старые пользователи
-    
     const authSystem = new AuthSystem();
     
     // Добавляем кнопки быстрого входа для демо

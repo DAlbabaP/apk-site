@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# Перенаправление API запросов
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+
+# Разрешить доступ к статическим файлам
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Остальные запросы на index.html (для SPA)
+RewriteRule ^(?!api/).*$ index.html [L]
