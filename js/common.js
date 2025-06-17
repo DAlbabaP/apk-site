@@ -3,14 +3,17 @@
 
 // API Configuration and Utilities
 const API_CONFIG = {
-    baseURL: '/agrozayavki/api',    endpoints: {
+    baseURL: '',
+    endpoints: {
         auth: {
-            login: '/login',
-            register: '/register'
+            login: '/api/login.php',
+            register: '/api/users.php'
         },
-        applications: '/applications',
-        products: '/products',
-        sets: '/sets'
+        users: '/api/users.php',
+        applications: '/api/applications.php', 
+        products: '/api/products.php',
+        sets: '/api/sets.php',
+        stats: '/api/stats.php'
     }
 };
 
@@ -105,6 +108,8 @@ class APIClient {
 
 // Global API client instance
 const api = new APIClient();
+// Делаем api доступным глобально
+window.api = api;
 
 // Authentication utilities
 const AuthManager = {    // Login user
@@ -143,15 +148,24 @@ const AuthManager = {    // Login user
         api.setToken(null);
         localStorage.removeItem('current_user');
         localStorage.removeItem('auth_token');
-        localStorage.removeItem('currentSession'); // старый ключ
-        localStorage.removeItem('users'); // старые пользователи
-        window.location.href = '/agrozayavki/login.html';
+        // Очищаем также старые ключи для избежания конфликтов
+        localStorage.removeItem('currentSession'); 
+        localStorage.removeItem('users'); 
+        localStorage.removeItem('requests');
+        window.location.href = 'login.html';
     },
 
     // Get current user
     getCurrentUser() {
-        const userStr = localStorage.getItem('current_user');
-        return userStr ? JSON.parse(userStr) : null;
+        try {
+            const userStr = localStorage.getItem('current_user');
+            return userStr ? JSON.parse(userStr) : null;
+        } catch (error) {
+            console.error('Error parsing user data from localStorage:', error);
+            // Очищаем поврежденные данные
+            localStorage.removeItem('current_user');
+            return null;
+        }
     },
 
     // Check if user is authenticated
@@ -163,18 +177,19 @@ const AuthManager = {    // Login user
     hasRole(role) {
         const user = this.getCurrentUser();
         return user && user.role === role;
-    },
-
-    // Check if user has any of the specified roles
+    },    // Check if user has any of the specified roles
     hasAnyRole(roles) {
         const user = this.getCurrentUser();
         return user && roles.includes(user.role);
     }
 };
 
+// Делаем AuthManager доступным глобально
+window.AuthManager = AuthManager;
+
 // Applications API
 const ApplicationsAPI = {
-    // Get all applications with filters
+    // Get all applications
     async getAll(filters = {}) {
         return api.get(API_CONFIG.endpoints.applications, filters);
     },
@@ -192,6 +207,11 @@ const ApplicationsAPI = {
     // Delete application
     async delete(id) {
         return api.delete(`${API_CONFIG.endpoints.applications}?id=${id}`);
+    },
+
+    // Get application by ID
+    async getById(id) {
+        return api.get(`${API_CONFIG.endpoints.applications}?id=${id}`);
     }
 };
 
@@ -211,6 +231,60 @@ const ProductsAPI = {
 
     async delete(id) {
         return api.delete(`${API_CONFIG.endpoints.products}?id=${id}`);
+    }
+};
+
+// Users API
+const UsersAPI = {
+    // Get all users (admin only)
+    async getAll(filters = {}) {
+        return api.get(API_CONFIG.endpoints.users, filters);
+    },
+
+    // Create new user (admin only)
+    async create(userData) {
+        return api.post(API_CONFIG.endpoints.users, userData);
+    },
+
+    // Update user (admin only)
+    async update(id, userData) {
+        return api.put(`${API_CONFIG.endpoints.users}?id=${id}`, userData);
+    },
+
+    // Delete user (admin only)
+    async delete(id) {
+        return api.delete(`${API_CONFIG.endpoints.users}?id=${id}`);
+    },    // Get current user profile
+    async getProfile() {
+        return api.get(`${API_CONFIG.endpoints.users}?action=profile`);
+    },
+
+    // Update current user profile
+    async updateProfile(userData) {
+        return api.put(`${API_CONFIG.endpoints.users}?action=profile`, userData);
+    }
+};
+
+// Stats API
+const StatsAPI = {
+    // Get dashboard statistics
+    async getDashboardStats() {
+        return api.get(API_CONFIG.endpoints.stats);
+    },
+
+    // Get admin statistics
+    async getAdminStats() {
+        return api.get(API_CONFIG.endpoints.stats + '?type=admin');
+    },
+
+    // Get manager statistics
+    async getManagerStats() {
+        return api.get(API_CONFIG.endpoints.stats + '?type=manager');
+    },
+
+    // Get user statistics
+    async getUserStats() {
+        return api.get(API_CONFIG.endpoints.stats + '?type=user');
     }
 };
 
@@ -396,11 +470,27 @@ const Utils = {
 
 // Check authentication on page load
 document.addEventListener('DOMContentLoaded', () => {
-    // Redirect to login if not authenticated (except on public pages)
-    const publicPages = ['login.html', 'register.html', 'index.html', 'simple-login.html', 'test-api.html'];
-    const currentPage = window.location.pathname.split('/').pop();
+    // Добавляем API модули в window.api после загрузки всех классов
+    window.api.users = UsersAPI;
+    window.api.applications = ApplicationsAPI;
+    window.api.products = ProductsAPI;
+    window.api.stats = StatsAPI;
     
-    if (!publicPages.includes(currentPage) && !AuthManager.isAuthenticated()) {
-        window.location.href = '/agrozayavki/login.html';
+    console.log('✅ API modules initialized:', Object.keys(window.api));
+    
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    console.log('📄 Current page:', currentPage);
+    
+    // Только для публичных страниц - никаких проверок авторизации
+    // Дашборды сами проверяют свою авторизацию
+    const publicPages = ['login.html', 'register.html', 'index.html', 'simple-login.html', 'test-api.html'];
+    if (publicPages.includes(currentPage)) {
+        console.log('✅ Public page detected, no auth check needed');
+        return;
     }
+    
+    // Для защищенных страниц только логируем, но не перенаправляем
+    // Сами страницы должны выполнять свои проверки
+    console.log('🔍 Protected page detected:', currentPage);
+    console.log('🔐 Auth status:', AuthManager.isAuthenticated());
 });

@@ -46,8 +46,15 @@ class AdminDashboard {
                     window.location.href = dashboards[user.role];
                 }
                 return;
-            }            console.log('✅ Admin user authenticated:', user.username);
+            }
+
+            console.log('✅ Admin user authenticated:', user.username);
             this.currentUser = user;
+            
+            // Обновляем информацию в шапке
+            document.getElementById('userName').textContent = user.full_name || user.username || 'Администратор';
+            document.getElementById('userRole').textContent = 'Администратор';
+            document.getElementById('userAvatar').textContent = (user.full_name || user.username || 'А').charAt(0).toUpperCase();
         } catch (error) {
             console.error('❌ Auth check error:', error);
             window.location.href = 'login.html';
@@ -58,13 +65,11 @@ class AdminDashboard {
     async loadData() {
         try {
             console.log('🔄 Loading admin data from API...');
-              // Загружаем пользователей
+            
+            // Загружаем пользователей
             const usersResponse = await UsersAPI.getAll();
             this.users = usersResponse.users || [];
             console.log('✅ Users loaded:', this.users.length);
-            
-            // Обновляем информацию о текущем пользователе
-            this.updateCurrentUserInfo();
             
             // Загружаем заявки
             const applicationsResponse = await ApplicationsAPI.getAll();
@@ -137,8 +142,10 @@ class AdminDashboard {
                     this.renderUsers();
                 });
             }
-        });        // Фильтры заявок
-        ['requestStatusFilter', 'requestPriorityFilter', 'requestCategoryFilter', 'requestAssignmentFilter'].forEach(filterId => {
+        });
+
+        // Фильтры заявок
+        ['requestStatusFilter', 'requestPriorityFilter', 'requestAssignmentFilter'].forEach(filterId => {
             const element = document.getElementById(filterId);
             if (element) {
                 element.addEventListener('change', () => {
@@ -306,14 +313,11 @@ class AdminDashboard {
         const statusFilter = document.getElementById('requestStatusFilter')?.value;
         if (statusFilter) {
             filteredRequests = filteredRequests.filter(req => req.status === statusFilter);
-        }        const priorityFilter = document.getElementById('requestPriorityFilter')?.value;
-        if (priorityFilter) {
-            filteredRequests = filteredRequests.filter(req => req.priority === priorityFilter);
         }
 
-        const categoryFilter = document.getElementById('requestCategoryFilter')?.value;
-        if (categoryFilter) {
-            filteredRequests = filteredRequests.filter(req => req.category === categoryFilter);
+        const priorityFilter = document.getElementById('requestPriorityFilter')?.value;
+        if (priorityFilter) {
+            filteredRequests = filteredRequests.filter(req => req.priority === priorityFilter);
         }
 
         const assignmentFilter = document.getElementById('requestAssignmentFilter')?.value;
@@ -337,27 +341,28 @@ class AdminDashboard {
             );
 
             container.innerHTML = `
-                <table class="data-table">                    <thead>
+                <table class="data-table">
+                    <thead>
                         <tr>
                             <th>Заявка</th>
                             <th>Пользователь</th>
                             <th>Менеджер</th>
-                            <th>Категория</th>
                             <th>Приоритет</th>
                             <th>Статус</th>
                             <th>Дата</th>
                             <th>Действия</th>
                         </tr>
                     </thead>
-                    <tbody>                        ${sortedRequests.map(req => {
+                    <tbody>
+                        ${sortedRequests.map(req => {
                             const user = this.users.find(u => u.id == req.user_id);
                             const manager = this.users.find(u => u.id == req.assigned_manager_id);
                             return `
                                 <tr>
-                                    <td><strong>${req.title}</strong></td>                                    <td>${user ? (user.full_name || (user.first_name + ' ' + user.last_name).trim() || user.username) : 'Неизвестно'}</td>
-                                    <td>${manager ? (manager.full_name || (manager.first_name + ' ' + manager.last_name).trim() || manager.username) : 'Не назначен'}</td>
-                                    <td><span class="category-badge category-${req.category || 'other'}">${this.getCategoryName(req.category)}</span></td>
-                                    <td><span class="priority-badge priority-${req.priority}">${this.getPriorityName(req.priority)}</span></td>
+                                    <td><strong>${req.title}</strong></td>
+                                    <td>${user ? (user.full_name || user.first_name + ' ' + user.last_name || user.username) : 'Неизвестно'}</td>
+                                    <td>${manager ? (manager.full_name || manager.first_name + ' ' + manager.last_name || manager.username) : 'Не назначен'}</td>
+                                    <td><span class="role-badge role-${req.priority === 'high' ? 'admin' : req.priority === 'medium' ? 'manager' : 'user'}">${this.getPriorityName(req.priority)}</span></td>
                                     <td><span class="status-badge status-${req.status}">${this.getStatusName(req.status)}</span></td>
                                     <td>${new Date(req.created_at).toLocaleDateString('ru-RU')}</td>
                                     <td>
@@ -384,13 +389,14 @@ class AdminDashboard {
     renderAssignments() {
         const container = document.getElementById('assignmentsContainer');
         if (!container) return;
-          // Группируем заявки по менеджерам
+        
+        // Группируем заявки по менеджерам
         const assignmentData = this.managers.map(manager => {
             const assignedRequests = this.requests.filter(req => req.assigned_manager_id == manager.id);
             return {
                 manager,
                 total: assignedRequests.length,
-                pending: assignedRequests.filter(req => ['pending', 'in_progress'].includes(req.status)).length,
+                pending: assignedRequests.filter(req => ['new', 'pending'].includes(req.status)).length,
                 completed: assignedRequests.filter(req => req.status === 'completed').length,
                 requests: assignedRequests
             };
@@ -406,9 +412,10 @@ class AdminDashboard {
                 </div>
             ` : ''}
             
-            <div class="stats-grid">                ${assignmentData.map(data => `
+            <div class="stats-grid">
+                ${assignmentData.map(data => `
                     <div class="stat-card">
-                        <h3>${data.manager.full_name || (data.manager.first_name + ' ' + data.manager.last_name).trim() || data.manager.username}</h3>
+                        <h3>${data.manager.full_name || data.manager.first_name + ' ' + data.manager.last_name || data.manager.username}</h3>
                         <div class="stat-number">${data.total}</div>
                         <p>Всего заявок</p>
                         <div class="assignment-details">
@@ -418,28 +425,6 @@ class AdminDashboard {
                 `).join('')}
             </div>
         `;
-    }
-
-    // Обновление информации о текущем пользователе в шапке
-    updateCurrentUserInfo() {
-        const currentUser = AuthManager.getCurrentUser();
-        if (!currentUser) return;
-        
-        // Находим полные данные текущего пользователя в загруженном списке
-        const fullUserData = this.users.find(u => u.username === currentUser.username);
-        
-        if (fullUserData) {
-            // Используем полные данные
-            const fullName = fullUserData.full_name || (fullUserData.first_name + ' ' + fullUserData.last_name).trim();
-            document.getElementById('userName').textContent = fullName || fullUserData.username || 'Администратор';
-            document.getElementById('userRole').textContent = 'Администратор';
-            document.getElementById('userAvatar').textContent = (fullName || fullUserData.username || 'А').charAt(0).toUpperCase();
-        } else {
-            // Фоллбэк к данным из localStorage
-            document.getElementById('userName').textContent = currentUser.username || 'Администратор';
-            document.getElementById('userRole').textContent = 'Администратор';
-            document.getElementById('userAvatar').textContent = (currentUser.username || 'А').charAt(0).toUpperCase();
-        }
     }
 
     // Вспомогательные методы
@@ -462,7 +447,9 @@ class AdminDashboard {
             'cancelled': 'Отменено'
         };
         return statusNames[status] || status;
-    }    getPriorityName(priority) {
+    }
+
+    getPriorityName(priority) {
         const priorityNames = {
             'low': 'Низкий',
             'medium': 'Средний',
@@ -470,17 +457,6 @@ class AdminDashboard {
             'urgent': 'Срочный'
         };
         return priorityNames[priority] || priority;
-    }
-
-    getCategoryName(category) {
-        const categoryNames = {
-            'seeds': 'Семена',
-            'fertilizers': 'Удобрения',
-            'equipment': 'Оборудование',
-            'consultation': 'Консультация',
-            'other': 'Прочее'
-        };
-        return categoryNames[category] || 'Не указано';
     }
 
     // Заглушки для методов, которые могут вызываться из HTML
@@ -492,62 +468,12 @@ class AdminDashboard {
     toggleUserStatus(userId) {
         console.log('Toggle user status:', userId);
         // Реализация изменения статуса пользователя
-    }    openAssignModal(requestId) {
-        console.log('Open assign modal for request:', requestId);
-        const request = this.requests.find(r => r.id == requestId);
-        if (!request) {
-            console.error('Request not found:', requestId);
-            return;
-        }
-        
-        // Простое диалоговое окно для назначения менеджера
-        const managerOptions = this.managers.map(m => 
-            `${m.id}: ${m.full_name || (m.first_name + ' ' + m.last_name).trim() || m.username}`
-        ).join('\n');
-        
-        const managerId = prompt(`Выберите менеджера для заявки "${request.title}":\n\n${managerOptions}\n\nВведите ID менеджера:`);
-        
-        if (managerId && this.managers.find(m => m.id == managerId)) {
-            this.assignRequest(requestId, managerId);
-        } else if (managerId) {
-            alert('Менеджер с таким ID не найден');
-        }
     }
-    
-    async assignRequest(requestId, managerId) {
-        try {
-            console.log('Assigning request', requestId, 'to manager', managerId);
-            
-            // В реальной реализации здесь был бы API вызов
-            // const response = await ApplicationsAPI.update(requestId, { assigned_manager_id: managerId });
-            
-            // Пока обновляем локально
-            const request = this.requests.find(r => r.id == requestId);
-            if (request) {
-                request.assigned_manager_id = parseInt(managerId);
-                
-                // Перерендерим интерфейс
-                this.renderRequests();
-                this.renderAssignments();
-                
-                alert('Менеджер успешно назначен!');
-            }
-        } catch (error) {
-            console.error('Error assigning request:', error);
-            alert('Ошибка при назначении менеджера');
-        }
-    }
-}
 
-// Функция выхода из системы
-function logout() {
-    console.log('🚪 Logging out...');
-    
-    // Очищаем данные авторизации
-    AuthManager.logout();
-    
-    // Перенаправляем на страницу входа
-    window.location.href = 'login.html';
+    openAssignModal(requestId) {
+        console.log('Open assign modal:', requestId);
+        // Реализация модального окна назначения
+    }
 }
 
 // Инициализация после загрузки DOM

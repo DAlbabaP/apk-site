@@ -30,8 +30,7 @@
       <p id="userRole">
        Пользователь
       </p>
-     </div>
-     <button class="logout-btn" onclick="logout()">
+     </div>     <button class="logout-btn">
       Выйти
      </button>
     </div>
@@ -195,30 +194,29 @@
       </p>
      </div>
      <div class="content-body">
-      <form id="profileForm">
-       <div class="form-group">
+      <form id="profileForm">       <div class="form-group">
         <label class="form-label" for="profileFullName">
          ФИО
         </label>
-        <input class="form-input" id="profileFullName" required="" type="text"/>
+        <input class="form-input" id="profileFullName" name="profileFullName" required="" type="text"/>
        </div>
        <div class="form-group">
         <label class="form-label" for="profileLogin">
          Логин
         </label>
-        <input class="form-input" disabled="" id="profileLogin" type="text"/>
+        <input class="form-input" disabled="" id="profileLogin" name="profileLogin" type="text"/>
        </div>
        <div class="form-group">
         <label class="form-label" for="profilePhone">
          Телефон
         </label>
-        <input class="form-input" id="profilePhone" required="" type="tel"/>
+        <input class="form-input" id="profilePhone" name="profilePhone" required="" type="tel"/>
        </div>
        <div class="form-group">
         <label class="form-label" for="profileEmail">
          Email
         </label>
-        <input class="form-input" id="profileEmail" required="" type="email"/>
+        <input class="form-input" id="profileEmail" name="profileEmail" required="" type="email"/>
        </div>
        <button class="btn btn-primary" type="submit">
         Сохранить изменения
@@ -266,35 +264,34 @@
       </p>
      </div>
      <div class="content-body">
-      <form id="createRequestForm">
-       <div class="form-group">
+      <form id="createRequestForm">       <div class="form-group">
         <label class="form-label" for="requestTitle">
          Заголовок заявки
         </label>
-        <input class="form-input" id="requestTitle" placeholder="Краткое описание проблемы" required="" type="text"/>
+        <input class="form-input" id="requestTitle" name="requestTitle" placeholder="Краткое описание проблемы" required="" type="text"/>
        </div>
        <div class="form-group">
         <label class="form-label" for="requestCategory">
          Категория
         </label>
-        <select class="form-input" id="requestCategory" required="">
+        <select class="form-input" id="requestCategory" name="requestCategory" required="">
          <option value="">
           Выберите категорию
          </option>
-         <option value="maintenance">
-          Техническое обслуживание
+         <option value="seeds">
+          Семена
          </option>
-         <option value="repair">
-          Ремонт оборудования
+         <option value="fertilizers">
+          Удобрения
          </option>
-         <option value="supply">
-          Поставка материалов
+         <option value="equipment">
+          Оборудование
          </option>
          <option value="consultation">
           Консультация
          </option>
          <option value="other">
-          Другое
+          Прочее
          </option>
         </select>
        </div>
@@ -302,7 +299,7 @@
         <label class="form-label" for="requestPriority">
          Приоритет
         </label>
-        <select class="form-input" id="requestPriority" required="">
+        <select class="form-input" id="requestPriority" name="requestPriority" required="">
          <option value="">
           Выберите приоритет
          </option>
@@ -315,13 +312,16 @@
          <option value="high">
           Высокий
          </option>
+         <option value="urgent">
+          Срочный
+         </option>
         </select>
        </div>
        <div class="form-group">
         <label class="form-label" for="requestDescription">
          Подробное описание
         </label>
-        <textarea class="form-input" id="requestDescription" placeholder="Опишите проблему подробно..." required="" rows="5"></textarea>
+        <textarea class="form-input" id="requestDescription" name="requestDescription" placeholder="Опишите проблему подробно..." required="" rows="5"></textarea>
        </div>
        <button class="btn btn-primary" type="submit">
         Создать заявку

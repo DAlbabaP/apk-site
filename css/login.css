@@ -311,3 +311,174 @@
                 transform: translateY(0);
             }
         }
+
+        .form-input.success,
+        .form-select.success {
+            border-color: var(--success-color);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23388E3C' d='m6.564.75-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+        }
+
+        .form-input.error,
+        .form-select.error {
+            border-color: var(--error-color);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23D32F2F'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.5 5.5 2.83 2.83m0-2.83L5.5 8.33'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+        }
+
+        .form-input.checking,
+        .form-select.checking {
+            border-color: var(--secondary-color);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFA726' stroke-width='2'%3e%3cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Анимация загрузки */
+        @keyframes spin {
+            from { 
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFA726' stroke-width='2'%3e%3cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3e%3c/svg%3e");
+                transform: rotate(0deg); 
+            }
+            to { 
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFA726' stroke-width='2'%3e%3cpath d='M21 12a9 9 0 1 1-6.219-8.56'/%3e%3c/svg%3e");
+                transform: rotate(360deg); 
+            }
+        }
+
+        /* Сообщения об ошибках */
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            min-height: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: block;
+        }
+
+        .error-message.show {
+            opacity: 1;
+        }
+
+        /* Сообщения об успехе */
+        .success-message {
+            color: var(--success-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            min-height: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: block;
+        }
+
+        .success-message.show {
+            opacity: 1;
+        }
+
+        /* Улучшенная кнопка отправки */
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn .loading {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: buttonSpin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes buttonSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Улучшенные дополнительные поля */
+        .additional-fields {
+            border: 2px dashed var(--gray-light);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+            background: rgba(46, 125, 50, 0.02);
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .additional-fields.show {
+            display: block;
+        }
+
+        .additional-fields h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+                padding-top: 1.5rem;
+                padding-bottom: 1.5rem;
+            }
+        }
+
+        /* Улучшенная демо секция */
+        .demo-quick-login {
+            animation: fadeInUp 0.5s ease 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive улучшения */
+        @media (max-width: 480px) {
+            .form-input.success,
+            .form-input.error,
+            .form-input.checking {
+                background-size: 14px 10px;
+                background-position: right 0.5rem center;
+            }
+            
+            .additional-fields {
+                padding: 1rem;
+            }
+            
+            .demo-quick-login {
+                margin-top: 15px;
+                padding: 12px;
+            }
+            
+            .demo-quick-login h4 {
+                font-size: 13px;
+            }
+        }

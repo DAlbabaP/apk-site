@@ -22,130 +22,196 @@
      АгроЗаявки
     </a>
     <h1 class="page-title">
-     Регистрация
+     Регистрация в системе
     </h1>
     <p class="page-subtitle">
-     Создайте аккаунт для работы с системой
+     Создайте аккаунт для работы с системой управления заявками
     </p>
    </div>
+
    <form id="registerForm" novalidate="">
     <div class="form-group">
      <label class="form-label required" for="fullName">
       ФИО
      </label>
-     <input class="form-input" id="fullName" name="fullName" placeholder="Иванов Иван Иванович" required="" type="text"/>
-     <div class="error-message" id="fullNameError">
-     </div>
+     <input 
+       class="form-input" 
+       id="fullName" 
+       name="fullName" 
+       placeholder="Иванов Иван Иванович" 
+       required="" 
+       type="text"
+       autocomplete="name"
+     />
+     <div class="error-message" id="fullNameError"></div>
     </div>
+
     <div class="form-group">
      <label class="form-label required" for="login">
       Логин
      </label>
-     <input class="form-input" id="login" name="login" placeholder="user123" required="" type="text"/>
-     <div class="error-message" id="loginError">
-     </div>
-     <div class="success-message" id="loginSuccess">
-     </div>
+     <input 
+       class="form-input" 
+       id="login" 
+       name="login" 
+       placeholder="user123" 
+       required="" 
+       type="text"
+       autocomplete="username"
+     />
+     <div class="error-message" id="loginError"></div>
+     <div class="success-message" id="loginSuccess"></div>
     </div>
-    <div class="form-group">
-     <label class="form-label required" for="phone">
-      Номер телефона
-     </label>
-     <input class="form-input" id="phone" name="phone" placeholder="+7 (999) 123-45-67" required="" type="tel"/>
-     <div class="error-message" id="phoneError">
-     </div>
-    </div>
+
     <div class="form-group">
      <label class="form-label required" for="email">
       Email
      </label>
-     <input class="form-input" id="email" name="email" placeholder="user@example.com" required="" type="email"/>
-     <div class="error-message" id="emailError">
-     </div>
+     <input 
+       class="form-input" 
+       id="email" 
+       name="email" 
+       placeholder="user@example.com" 
+       required="" 
+       type="email"
+       autocomplete="email"
+     />
+     <div class="error-message" id="emailError"></div>
     </div>
+
+    <div class="form-group">
+     <label class="form-label required" for="phone">
+      Номер телефона
+     </label>
+     <input 
+       class="form-input" 
+       id="phone" 
+       name="phone" 
+       placeholder="+7 (999) 123-45-67" 
+       required="" 
+       type="tel"
+       autocomplete="tel"
+     />
+     <div class="error-message" id="phoneError"></div>
+    </div>
+
     <div class="form-group">
      <label class="form-label required" for="password">
       Пароль
      </label>
-     <input class="form-input" id="password" name="password" placeholder="Введите пароль" required="" type="password"/>
-     <div class="error-message" id="passwordError">
-     </div>
+     <input 
+       class="form-input" 
+       id="password" 
+       name="password" 
+       placeholder="Введите пароль (минимум 6 символов)" 
+       required="" 
+       type="password"
+       autocomplete="new-password"
+     />
+     <div class="error-message" id="passwordError"></div>
     </div>
+
     <div class="form-group">
      <label class="form-label required" for="confirmPassword">
       Подтверждение пароля
      </label>
-     <input class="form-input" id="confirmPassword" name="confirmPassword" placeholder="Повторите пароль" required="" type="password"/>
-     <div class="error-message" id="confirmPasswordError">
-     </div>
+     <input 
+       class="form-input" 
+       id="confirmPassword" 
+       name="confirmPassword" 
+       placeholder="Повторите пароль" 
+       required="" 
+       type="password"
+       autocomplete="new-password"
+     />
+     <div class="error-message" id="confirmPasswordError"></div>
     </div>
+
     <div class="form-group">
      <label class="form-label required" for="role">
-      Статус
+      Роль в системе
      </label>
      <select class="form-select" id="role" name="role" required="">
       <option value="">
-       Выберите статус
+       Выберите вашу роль
       </option>
       <option value="user">
-       Пользователь
+       👤 Пользователь
       </option>
       <option value="manager">
-       Менеджер
+       👔 Менеджер
       </option>
      </select>
-     <div class="error-message" id="roleError">
-     </div>
+     <div class="error-message" id="roleError"></div>
     </div>
+
+    <!-- Дополнительные поля для менеджера -->
     <div class="additional-fields" id="managerFields">
      <h4>
-      Дополнительная информация для менеджера
+      📋 Дополнительная информация для менеджера
      </h4>
+     
      <div class="form-group">
       <label class="form-label required" for="department">
-       Участок
+       Участок/Отдел
       </label>
-      <input class="form-input" id="department" name="department" placeholder="Название участка" type="text"/>
-      <div class="error-message" id="departmentError">
-      </div>
+      <input 
+        class="form-input" 
+        id="department" 
+        name="department" 
+        placeholder="Название участка или отдела" 
+        type="text"
+      />
+      <div class="error-message" id="departmentError"></div>
      </div>
+
      <div class="form-group">
       <label class="form-label required" for="position">
        Должность
       </label>
-      <input class="form-input" id="position" name="position" placeholder="Название должности" type="text"/>
-      <div class="error-message" id="positionError">
-      </div>
+      <input 
+        class="form-input" 
+        id="position" 
+        name="position" 
+        placeholder="Название должности" 
+        type="text"
+      />
+      <div class="error-message" id="positionError"></div>
      </div>
+
      <div class="form-group">
       <label class="form-label required" for="positionCode">
        Код должности
       </label>
-      <input class="form-input" id="positionCode" name="positionCode" placeholder="Например: MGR001" type="text"/>
-      <div class="error-message" id="positionCodeError">
-      </div>
+      <input 
+        class="form-input" 
+        id="positionCode" 
+        name="positionCode" 
+        placeholder="Например: MGR001" 
+        type="text"
+      />
+      <div class="error-message" id="positionCodeError"></div>
      </div>
     </div>
+
     <button class="btn btn-primary" id="submitBtn" type="submit">
-     <span class="loading" id="loadingSpinner">
-     </span>
+     <span class="loading" id="loadingSpinner"></span>
      Зарегистрироваться
     </button>
    </form>
+
    <div class="links-section">
     <p>
      Уже есть аккаунт?
      <a href="login.html">
-      Войти
+      Войти в систему
      </a>
     </p>
    </div>
   </div>
-  <div class="notification" id="notification">
-  </div>
-  <script src="js/common.js">
-  </script>
-  <script src="js/register.js">
-  </script>
+
+  <!-- Подключение новых скриптов -->
+  <script src="js/common.js"></script>
+  <script src="js/auth-register.js"></script>
  </body>
 </html>

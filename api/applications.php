@@ -4,35 +4,54 @@ require_once 'db.php';
 require_once 'auth.php';
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-switch ($_SERVER['REQUEST_METHOD']) {
-    case 'GET':
-        check_auth();
-        handleGetApplications();
-        break;
-    case 'POST':
-        check_auth();
-        handleCreateApplication();
-        break;
-    case 'PUT':
-        check_auth();
-        handleUpdateApplication();
-        break;
-    case 'DELETE':
-        check_auth();
-        handleDeleteApplication();
-        break;
-    default:
-        http_response_code(405);
-        echo json_encode(['error' => 'Method not allowed']);
+// Обработка preflight запросов
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
 }
 
-function handleGetApplications() {
+// Проверяем авторизацию
+$auth_result = checkAuth();
+if (!$auth_result['success']) {
+    http_response_code(401);
+    echo json_encode(['error' => $auth_result['error']]);
+    exit;
+}
+
+$current_user = $auth_result['user'];
+
+try {
+    switch ($_SERVER['REQUEST_METHOD']) {
+        case 'GET':
+            handleGetApplications($current_user);
+            break;
+        case 'POST':
+            handleCreateApplication($current_user);
+            break;
+        case 'PUT':
+            handleUpdateApplication($current_user);
+            break;
+        case 'DELETE':
+            handleDeleteApplication($current_user);
+            break;
+        default:
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+    }
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Server error: ' . $e->getMessage()]);
+}
+
+function handleGetApplications($current_user) {
     global $pdo;
     
-    $user = getCurrentUser();
-    $role = $user['role'];
-    $userId = $user['id'];
+    $role = $current_user['role'];
+    $userId = $current_user['id'];
     
     // Базовый запрос с JOIN для получения информации о пользователе и менеджере
     $sql = "SELECT a.*, 
@@ -71,15 +90,19 @@ function handleGetApplications() {
     }
     
     $sql .= " ORDER BY a.created_at DESC";
-    
-    $stmt = $pdo->prepare($sql);
+      $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $applications = $stmt->fetchAll();
     
-    echo json_encode($applications);
+    // Возвращаем данные в стандартном формате
+    echo json_encode([
+        'success' => true,
+        'applications' => $applications,
+        'total' => count($applications)
+    ]);
 }
 
-function handleCreateApplication() {
+function handleCreateApplication($current_user) {
     global $pdo;
     
     $data = json_decode(file_get_contents('php://input'), true);
@@ -87,10 +110,7 @@ function handleCreateApplication() {
     if (!$data) {
         http_response_code(400);
         echo json_encode(['error' => 'Invalid JSON data']);
-        return;
-    }
-    
-    $user = getCurrentUser();
+        return;    }
     
     // Валидация обязательных полей
     $required = ['title', 'description', 'category'];
@@ -106,9 +126,8 @@ function handleCreateApplication() {
         $stmt = $pdo->prepare("INSERT INTO applications 
             (user_id, title, description, category, priority, quantity, unit, delivery_address, delivery_date, budget) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        
-        $stmt->execute([
-            $user['id'],
+          $stmt->execute([
+            $current_user['id'],
             $data['title'],
             $data['description'],
             $data['category'],
@@ -134,7 +153,7 @@ function handleCreateApplication() {
     }
 }
 
-function handleUpdateApplication() {
+function handleUpdateApplication($current_user) {
     global $pdo;
     
     parse_str($_SERVER['QUERY_STRING'], $params);
@@ -146,9 +165,7 @@ function handleUpdateApplication() {
         return;
     }
     
-    $data = json_decode(file_get_contents('php://input'), true);
-    $user = getCurrentUser();
-    
+    $data = json_decode(file_get_contents('php://input'), true);    
     // Проверяем права доступа
     $stmt = $pdo->prepare("SELECT * FROM applications WHERE id = ?");
     $stmt->execute([$id]);
@@ -158,10 +175,9 @@ function handleUpdateApplication() {
         http_response_code(404);
         echo json_encode(['error' => 'Application not found']);
         return;
-    }
-    
+    }    
     // Пользователи могут редактировать только свои заявки
-    if ($user['role'] === 'user' && $application['user_id'] != $user['id']) {
+    if ($current_user['role'] === 'user' && $application['user_id'] != $current_user['id']) {
         http_response_code(403);
         echo json_encode(['error' => 'Access denied']);
         return;
@@ -207,7 +223,7 @@ function handleUpdateApplication() {
     }
 }
 
-function handleDeleteApplication() {
+function handleDeleteApplication($current_user) {
     global $pdo;
     
     parse_str($_SERVER['QUERY_STRING'], $params);
@@ -216,10 +232,7 @@ function handleDeleteApplication() {
     if (!$id) {
         http_response_code(400);
         echo json_encode(['error' => 'Application ID is required']);
-        return;
-    }
-    
-    $user = getCurrentUser();
+        return;    }
     
     // Проверяем существование заявки и права доступа
     $stmt = $pdo->prepare("SELECT * FROM applications WHERE id = ?");
@@ -233,7 +246,7 @@ function handleDeleteApplication() {
     }
     
     // Только создатель заявки или админ может удалить заявку
-    if ($user['role'] !== 'admin' && $application['user_id'] != $user['id']) {
+    if ($current_user['role'] !== 'admin' && $application['user_id'] != $current_user['id']) {
         http_response_code(403);
         echo json_encode(['error' => 'Access denied']);
         return;
@@ -247,28 +260,6 @@ function handleDeleteApplication() {
         
     } catch (PDOException $e) {
         http_response_code(500);
-        echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
-    }
-}
-
-function getCurrentUser() {
-    // В реальном проекте здесь должна быть проверка JWT токена
-    // Для демо возвращаем тестового пользователя
-    global $pdo;
-    
-    $headers = getallheaders();
-    $token = str_replace('Bearer ', '', $headers['Authorization'] ?? '');
-    
-    // Простая проверка токена (в реальном проекте использовать JWT)
-    if ($token === 'demo_token_admin') {
-        return ['id' => 1, 'role' => 'admin'];
-    } elseif ($token === 'demo_token_manager') {
-        return ['id' => 2, 'role' => 'manager'];
-    } elseif ($token === 'demo_token_user') {
-        return ['id' => 3, 'role' => 'user'];
-    }
-    
-    // Дефолтный пользователь для совместимости
-    return ['id' => 3, 'role' => 'user'];
+        echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);    }
 }
 ?>

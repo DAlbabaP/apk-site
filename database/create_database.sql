@@ -2,8 +2,8 @@
 -- Выполните этот скрипт в MySQL для создания необходимых таблиц
 
 -- Создание базы данных
-CREATE DATABASE IF NOT EXISTS shop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE shop;
+CREATE DATABASE IF NOT EXISTS agro_requests CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE agro_requests;
 
 -- Таблица пользователей
 CREATE TABLE IF NOT EXISTS users (
@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('admin', 'manager', 'user') DEFAULT 'user',
     first_name VARCHAR(50),
     last_name VARCHAR(50),
+    phone VARCHAR(20),
+    is_active TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

@@ -3,21 +3,83 @@
 require_once 'db.php';
 
 // Проверка авторизации через Bearer Token
-function check_auth() {
+function checkAuth() {
+    global $pdo;
+    
     $headers = getallheaders();
     if (!isset($headers['Authorization'])) {
-        http_response_code(401);
-        echo json_encode(['error' => 'Unauthorized']);
-        exit;
+        return ['success' => false, 'error' => 'Authorization header missing'];
     }
+    
     $token = str_replace('Bearer ', '', $headers['Authorization']);
     
-    // Для демо: простые токены. В реальном проекте — JWT
-    $validTokens = ['demo_token', 'demo_token_admin', 'demo_token_manager', 'demo_token_user'];
-    if (!in_array($token, $validTokens)) {
-        http_response_code(403);
-        echo json_encode(['error' => 'Forbidden']);
-        exit;
+    // Проверяем демо-токены
+    $tokenToRole = [
+        'demo_token_admin' => 'admin',
+        'demo_token_manager' => 'manager', 
+        'demo_token_user' => 'user',
+        'demo_token' => 'user'
+    ];
+    
+    if (isset($tokenToRole[$token])) {
+        $role = $tokenToRole[$token];
+        return [
+            'success' => true,
+            'user' => [
+                'id' => 1, // Для демо
+                'username' => $role === 'admin' ? 'admin' : ($role === 'manager' ? 'manager' : 'user'),
+                'role' => $role
+            ]
+        ];
+    }
+    
+    // Проверяем реальные токены (base64)
+    try {
+        $decoded = base64_decode($token);
+        if ($decoded === false) {
+            return ['success' => false, 'error' => 'Invalid token format'];
+        }
+        
+        $parts = explode(':', $decoded);
+        if (count($parts) !== 3) {
+            return ['success' => false, 'error' => 'Invalid token structure'];
+        }
+        
+        $user_id = $parts[0];
+        $timestamp = $parts[1];
+        $hash = $parts[2];
+        
+        // Проверяем, не истек ли токен (24 часа)
+        if (time() - $timestamp > 86400) {
+            return ['success' => false, 'error' => 'Token expired'];
+        }
+        
+        // Получаем пользователя из базы
+        $stmt = $pdo->prepare("SELECT id, username, role FROM users WHERE id = ? AND is_active = 1");
+        $stmt->execute([$user_id]);
+        $user = $stmt->fetch();
+        
+        if (!$user) {
+            return ['success' => false, 'error' => 'User not found'];
+        }
+        
+        // Проверяем хеш
+        $expected_hash = md5($user['username']);
+        if ($hash !== $expected_hash) {
+            return ['success' => false, 'error' => 'Invalid token hash'];
+        }
+        
+        return [
+            'success' => true,
+            'user' => [
+                'id' => $user['id'],
+                'username' => $user['username'],
+                'role' => $user['role']
+            ]
+        ];
+        
+    } catch (Exception $e) {
+        return ['success' => false, 'error' => 'Token validation error'];
     }
 }
 
