@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   API Управления Товарами - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/products-api.css" rel="stylesheet"/>
+ </head>
+ <body>  <div class="container">
+   <nav class="nav-bar">
+    <a class="home-link" href="index.html">← Вернуться на главную</a>
+   </nav>
+   <header class="header">
+    <h1>
+     🌾 API Управления Товарами
+    </h1>
+    <p>
+     Система управления ассортиментом и совместимостью товаров для АПК
+    </p>
+   </header>
+   <!-- API Management Section -->
+   <section class="section">
+    <div class="section-header">
+     <h2>
+      Управление товарами
+     </h2>
+     <p>
+      Регистрация, редактирование и контроль совместимости товаров
+     </p>
+    </div>
+    <div class="section-body">
+     <div class="tabs">
+      <button class="tab active" data-tab="products">
+       Товары
+      </button>
+      <button class="tab" data-tab="sets">
+       Наборы
+      </button>
+      <button class="tab" data-tab="compatibility">
+       Совместимость
+      </button>
+      <button class="tab" data-tab="api-test">
+       Тест API
+      </button>
+     </div>
+     <!-- Products Tab -->
+     <div class="tab-content active" id="products">
+      <div class="form-grid">
+       <div class="form-group">
+        <label class="form-label" for="productName">
+         Название товара
+        </label>
+        <input class="form-input" id="productName" placeholder="Название товара" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="productCategory">
+         Категория
+        </label>
+        <select class="form-select" id="productCategory">
+         <option value="">
+          Выберите категорию
+         </option>
+         <option value="seeds">
+          Семена
+         </option>
+         <option value="fertilizers">
+          Удобрения
+         </option>
+         <option value="pesticides">
+          Пестициды
+         </option>
+         <option value="equipment">
+          Оборудование
+         </option>
+         <option value="feeds">
+          Корма
+         </option>
+        </select>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="storageTemp">
+         Температура хранения (°C)
+        </label>
+        <input class="form-input" id="storageTemp" placeholder="От -10 до +25" type="number"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="storageHumidity">
+         Влажность хранения (%)
+        </label>
+        <input class="form-input" id="storageHumidity" placeholder="От 30 до 70" type="number"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="shelfLife">
+         Срок годности (дней)
+        </label>
+        <input class="form-input" id="shelfLife" placeholder="Количество дней" type="number"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="seasonality">
+         Сезонность
+        </label>
+        <select class="form-select" id="seasonality">
+         <option value="">
+          Выберите сезон
+         </option>
+         <option value="spring">
+          Весна
+         </option>
+         <option value="summer">
+          Лето
+         </option>
+         <option value="autumn">
+          Осень
+         </option>
+         <option value="winter">
+          Зима
+         </option>
+         <option value="year-round">
+          Круглый год
+         </option>
+        </select>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="packaging">
+         Упаковка
+        </label>
+        <select class="form-select" id="packaging">
+         <option value="">
+          Выберите тип упаковки
+         </option>
+         <option value="plastic">
+          Пластик
+         </option>
+         <option value="glass">
+          Стекло
+         </option>
+         <option value="metal">
+          Металл
+         </option>
+         <option value="paper">
+          Бумага
+         </option>
+         <option value="fabric">
+          Ткань
+         </option>
+        </select>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="specialCare">
+         Особые условия
+        </label>
+        <select class="form-select" id="specialCare">
+         <option value="">
+          Нет особых условий
+         </option>
+         <option value="refrigerated">
+          Охлаждение
+         </option>
+         <option value="dry">
+          Сухое хранение
+         </option>
+         <option value="dark">
+          Темное место
+         </option>
+         <option value="ventilated">
+          Вентиляция
+         </option>
+        </select>
+       </div>
+       <div class="form-group full-width">
+        <label class="form-label" for="productDescription">
+         Описание
+        </label>
+        <textarea class="form-textarea" id="productDescription" placeholder="Подробное описание товара"></textarea>
+       </div>
+      </div>
+      <button class="btn btn-primary" onclick="addProduct()">
+       Добавить товар
+      </button>
+      <button class="btn btn-secondary" onclick="clearProductForm()">
+       Очистить
+      </button>
+      <div id="productNotification">
+      </div>
+      <h3 style="margin-top: 2rem; margin-bottom: 1rem;">
+       Зарегистрированные товары
+      </h3>
+      <div id="productsContainer">
+       <div class="empty-state">
+        <div class="icon">
+         📦
+        </div>
+        <h4>
+         Товары не найдены
+        </h4>
+        <p>
+         Добавьте первый товар для начала работы
+        </p>
+       </div>
+      </div>
+     </div>
+     <!-- Sets Tab -->
+     <div class="tab-content" id="sets">
+      <div class="form-grid">
+       <div class="form-group">
+        <label class="form-label" for="setName">
+         Название набора
+        </label>
+        <input class="form-input" id="setName" placeholder="Название набора товаров" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="setType">
+         Тип набора
+        </label>
+        <select class="form-select" id="setType">
+         <option value="">
+          Выберите тип
+         </option>
+         <option value="seasonal">
+          Сезонный набор
+         </option>
+         <option value="functional">
+          Функциональный набор
+         </option>
+         <option value="promotional">
+          Промо-набор
+         </option>
+         <option value="starter">
+          Стартовый набор
+         </option>
+        </select>
+       </div>
+       <div class="form-group full-width">
+        <label class="form-label" for="setDescription">
+         Описание набора
+        </label>
+        <textarea class="form-textarea" id="setDescription" placeholder="Описание назначения и состава набора"></textarea>
+       </div>
+       <div class="form-group full-width">
+        <label class="form-label">
+         Товары в наборе
+        </label>
+        <div id="setProductsSelector">
+        </div>
+       </div>
+      </div>
+      <button class="btn btn-primary" onclick="createSet()">
+       Создать набор
+      </button>
+      <button class="btn btn-secondary" onclick="clearSetForm()">
+       Очистить
+      </button>
+      <div id="setNotification">
+      </div>
+      <h3 style="margin-top: 2rem; margin-bottom: 1rem;">
+       Созданные наборы
+      </h3>
+      <div id="setsContainer">
+       <div class="empty-state">
+        <div class="icon">
+         📋
+        </div>
+        <h4>
+         Наборы не найдены
+        </h4>
+        <p>
+         Создайте первый набор товаров
+        </p>
+       </div>
+      </div>
+     </div>
+     <!-- Compatibility Tab -->
+     <div class="tab-content" id="compatibility">
+      <h3>
+       Проверка совместимости товаров
+      </h3>
+      <p>
+       Система автоматически проверяет совместимость товаров по следующим критериям:
+      </p>
+      <div class="compatibility-grid">
+       <div class="compatibility-card">
+        <h4>
+         🌡️ Условия хранения
+        </h4>
+        <p>
+         Температура и влажность должны совпадать
+        </p>
+       </div>
+       <div class="compatibility-card">
+        <h4>
+         📅 Сроки годности
+        </h4>
+        <p>
+         Сезонность товаров должна быть совместимой
+        </p>
+       </div>
+       <div class="compatibility-card">
+        <h4>
+         📦 Упаковка
+        </h4>
+        <p>
+         Типы упаковки должны быть совместимы
+        </p>
+       </div>
+       <div class="compatibility-card">
+        <h4>
+         ⚡ Особые условия
+        </h4>
+        <p>
+         Специальные требования к хранению
+        </p>
+       </div>
+      </div>
+      <div style="margin-top: 2rem;">
+       <label class="form-label">
+        Выберите товары для проверки совместимости
+       </label>
+       <div id="compatibilitySelector">
+       </div>
+       <button class="btn btn-primary" onclick="checkCompatibility()" style="margin-top: 1rem;">
+        Проверить совместимость
+       </button>
+      </div>
+      <div id="compatibilityResults">
+      </div>
+     </div>
+     <!-- API Test Tab -->
+     <div class="tab-content" id="api-test">
+      <h3>
+       Тестирование API
+      </h3>
+      <p>
+       Демонстрация работы API для управления товарами
+      </p>
+      <div class="form-grid">
+       <div class="form-group">
+        <label class="form-label">
+         Метод API
+        </label>
+        <select class="form-select" id="apiMethod">
+         <option value="GET">
+          GET - Получить товары
+         </option>
+         <option value="POST">
+          POST - Добавить товар
+         </option>
+         <option value="PUT">
+          PUT - Обновить товар
+         </option>
+         <option value="DELETE">
+          DELETE - Удалить товар
+         </option>
+        </select>
+       </div>
+       <div class="form-group">
+        <label class="form-label">
+         Endpoint
+        </label>
+        <input class="form-input" id="apiEndpoint" readonly="" type="text" value="/api/products"/>
+       </div>
+       <div class="form-group full-width">
+        <label class="form-label">
+         Заголовки запроса
+        </label>
+        <textarea class="form-textarea" id="apiHeaders" readonly="">Authorization: Bearer {token}
+Content-Type: application/json</textarea>
+       </div>
+       <div class="form-group full-width">
+        <label class="form-label">
+         Тело запроса (JSON)
+        </label>
+        <textarea class="form-textarea" id="apiBody" placeholder="JSON данные для POST/PUT запросов"></textarea>
+       </div>
+      </div>
+      <button class="btn btn-primary" onclick="testAPI()">
+       Выполнить запрос
+      </button>
+      <button class="btn btn-secondary" onclick="generateSampleData()">
+       Сгенерировать тестовые данные
+      </button>
+      <div id="apiResponse">
+      </div>
+     </div>
+    </div>
+   </section>
+  </div>
+  <script src="js/common.js"></script>
+  <script src="js/products-api.js"></script>
+ </body>
+</html>
+cd api

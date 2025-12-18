@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Вход - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/login.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="login-container">
+   <div class="logo-section">
+    <a class="home-link" href="index.html">
+     ← Вернуться на главную
+    </a>
+    <a class="logo" href="index.html">
+     <div class="logo-icon">
+      🌾
+     </div>
+     АгроЗаявки
+    </a>
+    <h1 class="page-title">
+     Вход в систему
+    </h1>
+    <p class="page-subtitle">
+     Войдите в свой аккаунт для продолжения работы
+    </p>
+   </div>
+   <div class="demo-info">
+    <h4>
+     Демо-аккаунты:
+    </h4>
+    <div class="demo-accounts">
+     <div class="demo-account">
+      <span>
+       admin / admin123
+      </span>
+      <small>
+       (Администратор)
+      </small>
+     </div>
+     <div class="demo-account">
+      <span>
+       manager / manager123
+      </span>
+      <small>
+       (Менеджер)
+      </small>
+     </div>
+     <div class="demo-account">
+      <span>
+       user / user123
+      </span>
+      <small>
+       (Пользователь)
+      </small>
+     </div>
+    </div>
+    <small>
+     Или зарегистрируйте новый аккаунт
+    </small>
+   </div>
+   <form id="loginForm">
+    <div class="form-group">
+     <label class="form-label" for="login">
+      Логин
+     </label>
+     <input autocomplete="username" class="form-input" id="login" name="login" placeholder="Введите логин" required="" type="text"/>
+    </div>
+    <div class="form-group">
+     <label class="form-label" for="password">
+      Пароль
+     </label>
+     <input autocomplete="current-password" class="form-input" id="password" name="password" placeholder="Введите пароль" required="" type="password"/>
+    </div>
+    <div class="error-message" id="loginError">
+    </div>
+    <button class="btn btn-primary" id="submitBtn" type="submit">
+     <span class="loading" id="loadingSpinner">
+     </span>
+     Войти
+    </button>
+   </form>
+   <div class="links-section">
+    <p>
+     Нет аккаунта?
+     <a href="register.html">
+      Зарегистрироваться
+     </a>
+    </p>
+   </div>
+  </div>
+  <div class="notification" id="notification">
+  </div>
+  <script src="js/common.js">
+  </script>
+  <script src="js/login.js">
+  </script>
+ </body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Личный кабинет - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/dashboard-user.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <!-- Header -->
+  <header class="header">
+   <nav class="nav-container">
+    <a class="logo" href="index.html">
+     <div class="logo-icon">
+      🌾
+     </div>
+     АгроЗаявки
+    </a>
+    <div class="user-info">
+     <div class="user-avatar" id="userAvatar">
+      П
+     </div>
+     <div class="user-details">
+      <h3 id="userName">
+       Пользователь
+      </h3>
+      <p id="userRole">
+       Пользователь
+      </p>
+     </div>
+     <button class="logout-btn" onclick="logout()">
+      Выйти
+     </button>
+    </div>
+   </nav>
+  </header>
+  <!-- Main container -->
+  <div class="main-container">
+   <!-- Sidebar -->
+   <aside class="sidebar">
+    <h3>
+     Навигация
+    </h3>
+    <ul class="nav-menu">
+     <li>
+      <a class="nav-link active" data-page="dashboard" href="#">
+       <span class="icon">
+        🏠
+       </span>
+       Главная
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="profile" href="#">
+       <span class="icon">
+        👤
+       </span>
+       Личные данные
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="requests" href="#">
+       <span class="icon">
+        📝
+       </span>
+       Мои заявки
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="create-request" href="#">
+       <span class="icon">
+        ➕
+       </span>
+       Создать заявку
+      </a>
+     </li>
+    </ul>
+   </aside>
+   <!-- Content area -->
+   <main class="content">
+    <!-- Dashboard section -->
+    <section class="page-section active" id="dashboard">
+     <div class="content-header">
+      <h2>
+       Добро пожаловать!
+      </h2>
+      <p>
+       Управляйте своими заявками и отслеживайте их статус
+      </p>
+     </div>
+     <div class="content-body">
+      <!-- Statistics -->
+      <div class="stats-grid">
+       <div class="stat-card">
+        <div class="stat-number" id="totalRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Всего заявок
+        </div>
+       </div>
+       <div class="stat-card">
+        <div class="stat-number" id="pendingRequests">
+         0
+        </div>
+        <div class="stat-label">
+         В обработке
+        </div>
+       </div>
+       <div class="stat-card">
+        <div class="stat-number" id="completedRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Выполнено
+        </div>
+       </div>
+      </div>
+      <!-- Quick actions -->
+      <div class="quick-actions">
+       <h3>
+        Быстрые действия
+       </h3>
+       <div class="actions-grid">
+        <a class="action-card" data-page="create-request" href="#">
+         <div class="action-icon">
+          📝
+         </div>
+         <h4>
+          Создать заявку
+         </h4>
+         <p>
+          Подать новую заявку в систему
+         </p>
+        </a>
+        <a class="action-card" data-page="requests" href="#">
+         <div class="action-icon">
+          📊
+         </div>
+         <h4>
+          Мои заявки
+         </h4>
+         <p>
+          Просмотреть все заявки и их статус
+         </p>
+        </a>
+        <a class="action-card" data-page="profile" href="#">
+         <div class="action-icon">
+          ⚙️
+         </div>
+         <h4>
+          Настройки
+         </h4>
+         <p>
+          Редактировать личные данные
+         </p>
+        </a>
+       </div>
+      </div>
+      <!-- Recent requests -->
+      <div class="recent-requests">
+       <h3>
+        Последние заявки
+       </h3>
+       <div id="recentRequestsContainer">
+        <div class="empty-state">
+         <div class="icon">
+          📭
+         </div>
+         <h4>
+          Заявок пока нет
+         </h4>
+         <p>
+          Создайте первую заявку, чтобы начать работу
+         </p>
+         <a class="btn btn-primary" data-page="create-request" href="#">
+          Создать заявку
+         </a>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Profile section -->
+    <section class="page-section" id="profile">
+     <div class="content-header">
+      <h2>
+       Личные данные
+      </h2>
+      <p>
+       Управление информацией профиля
+      </p>
+     </div>
+     <div class="content-body">
+      <form id="profileForm">
+       <div class="form-group">
+        <label class="form-label" for="profileFullName">
+         ФИО
+        </label>
+        <input class="form-input" id="profileFullName" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileLogin">
+         Логин
+        </label>
+        <input class="form-input" disabled="" id="profileLogin" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profilePhone">
+         Телефон
+        </label>
+        <input class="form-input" id="profilePhone" required="" type="tel"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileEmail">
+         Email
+        </label>
+        <input class="form-input" id="profileEmail" required="" type="email"/>
+       </div>
+       <button class="btn btn-primary" type="submit">
+        Сохранить изменения
+       </button>
+      </form>
+     </div>
+    </section>
+    <!-- Requests section -->
+    <section class="page-section" id="requests">
+     <div class="content-header">
+      <h2>
+       Мои заявки
+      </h2>
+      <p>
+       Просмотр и управление заявками
+      </p>
+     </div>
+     <div class="content-body">
+      <div id="requestsContainer">
+       <div class="empty-state">
+        <div class="icon">
+         📭
+        </div>
+        <h4>
+         У вас пока нет заявок
+        </h4>
+        <p>
+         Создайте первую заявку для начала работы
+        </p>
+        <a class="btn btn-primary" data-page="create-request" href="#">
+         Создать заявку
+        </a>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Create request section -->
+    <section class="page-section" id="create-request">
+     <div class="content-header">
+      <h2>
+       Создание заявки
+      </h2>
+      <p>
+       Заполните форму для подачи новой заявки
+      </p>
+     </div>
+     <div class="content-body">
+      <form id="createRequestForm">
+       <div class="form-group">
+        <label class="form-label" for="requestTitle">
+         Заголовок заявки
+        </label>
+        <input class="form-input" id="requestTitle" name="requestTitle" placeholder="Краткое описание проблемы" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="requestCategory">
+         Категория
+        </label>
+        <select class="form-input" id="requestCategory" name="requestCategory" required="">
+         <option value="">
+          Выберите категорию
+         </option>
+         <option value="maintenance">
+          Техническое обслуживание
+         </option>
+         <option value="repair">
+          Ремонт оборудования
+         </option>
+         <option value="supply">
+          Поставка материалов
+         </option>
+         <option value="consultation">
+          Консультация
+         </option>
+         <option value="other">
+          Другое
+         </option>
+        </select>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="requestPriority">
+         Приоритет
+        </label>
+        <select class="form-input" id="requestPriority" name="requestPriority" required="">
+         <option value="">
+          Выберите приоритет
+         </option>
+         <option value="low">
+          Низкий
+         </option>
+         <option value="medium">
+          Средний
+         </option>
+         <option value="high">
+          Высокий
+         </option>
+        </select>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="requestDescription">
+         Подробное описание
+        </label>
+        <textarea class="form-input" id="requestDescription" name="requestDescription" placeholder="Опишите проблему подробно..." required="" rows="5"></textarea>
+       </div>
+       <button class="btn btn-primary" type="submit">
+        Создать заявку
+       </button>
+      </form>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script src="js/common.js">
+  </script>
+  <script src="js/dashboard-user.js">
+  </script>
+ </body>
+</html>

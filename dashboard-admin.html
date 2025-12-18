@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ru">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Панель администратора - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/dashboard-admin.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <!-- Header -->
+  <header class="header">
+   <nav class="nav-container">
+    <a class="logo" href="index.html">
+     <div class="logo-icon">
+      🌾
+     </div>
+     АгроЗаявки
+    </a>
+    <div class="user-info">
+     <div class="user-avatar" id="userAvatar">
+      А
+     </div>
+     <div class="user-details">
+      <h3 id="userName">
+       Администратор
+      </h3>
+      <p id="userRole">
+       Администратор
+      </p>
+     </div>
+     <button class="logout-btn" onclick="logout()">
+      Выйти
+     </button>
+    </div>
+   </nav>
+  </header>
+  <!-- Main container -->
+  <div class="main-container">
+   <!-- Sidebar -->
+   <aside class="sidebar">
+    <h3>
+     Панель управления
+    </h3>
+    <ul class="nav-menu">
+     <li>
+      <a class="nav-link active" data-page="dashboard" href="#">
+       <span class="icon">
+        📊
+       </span>
+       Аналитика
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="users" href="#">
+       <span class="icon">
+        👥
+       </span>
+       Пользователи
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="requests" href="#">
+       <span class="icon">
+        📋
+       </span>
+       Все заявки
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="assignments" href="#">
+       <span class="icon">
+        🔄
+       </span>
+       Назначения
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="reports" href="#">
+       <span class="icon">
+        📈
+       </span>
+       Отчеты
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="settings" href="#">
+       <span class="icon">
+        ⚙️
+       </span>
+       Настройки
+      </a>
+     </li>
+    </ul>
+   </aside>
+   <!-- Content area -->
+   <main class="content">
+    <!-- Dashboard section -->
+    <section class="page-section active" id="dashboard">
+     <div class="content-header">
+      <h2>
+       Аналитика системы
+      </h2>
+      <p>
+       Общая статистика и показатели эффективности
+      </p>
+     </div>
+     <div class="content-body">
+      <!-- Main statistics -->
+      <div class="stats-grid">
+       <div class="stat-card users">
+        <div class="stat-number" id="totalUsers">
+         0
+        </div>
+        <div class="stat-label">
+         Всего пользователей
+        </div>
+       </div>
+       <div class="stat-card requests">
+        <div class="stat-number" id="totalRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Всего заявок
+        </div>
+       </div>
+       <div class="stat-card pending">
+        <div class="stat-number" id="pendingRequests">
+         0
+        </div>
+        <div class="stat-label">
+         В обработке
+        </div>
+       </div>
+       <div class="stat-card completed">
+        <div class="stat-number" id="completedRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Выполнено
+        </div>
+       </div>
+      </div>
+      <!-- Charts -->
+      <div class="chart-container">
+       <div class="chart-placeholder">
+        📈
+       </div>
+       <h3>
+        Статистика заявок по времени
+       </h3>
+       <p>
+        График активности будет отображен здесь
+       </p>
+      </div>
+      <!-- Recent activity -->
+      <h3>
+       Последняя активность
+      </h3>
+      <div id="recentActivity">
+       <div class="empty-state">
+        <div class="icon">
+         📋
+        </div>
+        <h4>
+         Загрузка активности...
+        </h4>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Users section -->
+    <section class="page-section" id="users">
+     <div class="content-header">
+      <h2>
+       Управление пользователями
+      </h2>
+      <p>
+       Просмотр и редактирование пользователей системы
+      </p>
+     </div>
+     <div class="content-body">
+      <div class="actions-bar">
+       <button class="btn btn-primary" onclick="openUserModal()">
+        <span>
+         ➕
+        </span>
+        Добавить пользователя
+       </button>
+       <button class="btn btn-secondary" onclick="exportUsers()">
+        <span>
+         📥
+        </span>
+        Экспорт списка
+       </button>
+      </div>
+      <div class="filters">
+       <div class="filter-group">
+        <label class="filter-label">
+         Роль
+        </label>
+        <select class="filter-select" id="userRoleFilter">
+         <option value="">
+          Все роли
+         </option>
+         <option value="admin">
+          Администратор
+         </option>
+         <option value="manager">
+          Менеджер
+         </option>
+         <option value="user">
+          Пользователь
+         </option>
+        </select>
+       </div>
+       <div class="filter-group">
+        <label class="filter-label">
+         Статус
+        </label>
+        <select class="filter-select" id="userStatusFilter">
+         <option value="">
+          Все статусы
+         </option>
+         <option value="active">
+          Активный
+         </option>
+         <option value="inactive">
+          Неактивный
+         </option>
+        </select>
+       </div>
+      </div>
+      <div id="usersContainer">
+       <div class="empty-state">
+        <div class="icon">
+         👥
+        </div>
+        <h4>
+         Загрузка пользователей...
+        </h4>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Requests section -->
+    <section class="page-section" id="requests">
+     <div class="content-header">
+      <h2>
+       Управление заявками
+      </h2>
+      <p>
+       Просмотр всех заявок в системе
+      </p>
+     </div>
+     <div class="content-body">
+      <div class="filters">
+       <div class="filter-group">
+        <label class="filter-label">
+         Статус
+        </label>
+        <select class="filter-select" id="requestStatusFilter">
+         <option value="">
+          Все статусы
+         </option>
+         <option value="new">
+          Новые
+         </option>
+         <option value="in_progress">
+          В работе
+         </option>
+         <option value="completed">
+          Выполненные
+         </option>
+         <option value="rejected">
+          Отклоненные
+         </option>
+        </select>
+       </div>
+       <div class="filter-group">
+        <label class="filter-label">
+         Приоритет
+        </label>
+        <select class="filter-select" id="requestPriorityFilter">
+         <option value="">
+          Все приоритеты
+         </option>
+         <option value="high">
+          Высокий
+         </option>
+         <option value="medium">
+          Средний
+         </option>
+         <option value="low">
+          Низкий
+         </option>
+        </select>
+       </div>
+       <div class="filter-group">
+        <label class="filter-label">
+         Назначение
+        </label>
+        <select class="filter-select" id="requestAssignmentFilter">
+         <option value="">
+          Все заявки
+         </option>
+         <option value="unassigned">
+          Неназначенные
+         </option>
+         <option value="assigned">
+          Назначенные
+         </option>
+        </select>
+       </div>
+      </div>
+      <div id="requestsContainer">
+       <div class="empty-state">
+        <div class="icon">
+         📋
+        </div>
+        <h4>
+         Загрузка заявок...
+        </h4>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Assignments section -->
+    <section class="page-section" id="assignments">
+     <div class="content-header">
+      <h2>
+       Назначение заявок
+      </h2>
+      <p>
+       Распределение заявок между менеджерами
+      </p>
+     </div>
+     <div class="content-body">
+      <div id="assignmentsContainer">
+       <div class="empty-state">
+        <div class="icon">
+         🔄
+        </div>
+        <h4>
+         Загрузка данных...
+        </h4>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Reports section -->
+    <section class="page-section" id="reports">
+     <div class="content-header">
+      <h2>
+       Отчеты и аналитика
+      </h2>
+      <p>
+       Детальная статистика работы системы
+      </p>
+     </div>
+     <div class="content-body">
+      <div class="chart-container">
+       <div class="chart-placeholder">
+        📊
+       </div>
+       <h3>
+        Отчеты по эффективности
+       </h3>
+       <p>
+        Детальная аналитика будет доступна здесь
+       </p>
+      </div>
+     </div>
+    </section>
+    <!-- Settings section -->
+    <section class="page-section" id="settings">
+     <div class="content-header">
+      <h2>
+       Настройки системы
+      </h2>
+      <p>
+       Конфигурация и параметры работы
+      </p>
+     </div>
+     <div class="content-body">
+      <div class="form-group">
+       <label class="form-label">
+        Название системы
+       </label>
+       <input class="form-input" readonly="" type="text" value="АгроЗаявки"/>
+      </div>
+      <div class="form-group">
+       <label class="form-label">
+        Версия
+       </label>
+       <input class="form-input" readonly="" type="text" value="1.0.0"/>
+      </div>
+      <div class="actions-bar">
+       <button class="btn btn-warning" onclick="clearAllData()">
+        <span>
+         🗑️
+        </span>
+        Очистить все данные
+       </button>
+       <button class="btn btn-info" onclick="exportSystemData()">
+        <span>
+         📦
+        </span>
+        Экспорт данных
+       </button>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+  <!-- User Modal -->
+  <div class="modal" id="userModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h3 id="userModalTitle">
+      Добавить пользователя
+     </h3>
+     <button class="modal-close" onclick="closeUserModal()">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <form id="userForm">
+      <div class="form-grid">
+       <div class="form-group">
+        <label class="form-label" for="userFullName">
+         ФИО
+        </label>
+        <input class="form-input" id="userFullName" name="userFullName" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="userLogin">
+         Логин
+        </label>
+        <input class="form-input" id="userLogin" name="userLogin" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="userEmail">
+         Email
+        </label>
+        <input class="form-input" id="userEmail" name="userEmail" required="" type="email"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="userPhone">
+         Телефон
+        </label>
+        <input class="form-input" id="userPhone" name="userPhone" required="" type="tel"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="userRole">
+         Роль
+        </label>
+        <select class="form-select" id="userRole" name="userRole" required="">
+         <option value="">
+          Выберите роль
+         </option>
+         <option value="user">
+          Пользователь
+         </option>
+         <option value="manager">
+          Менеджер
+         </option>
+         <option value="admin">
+          Администратор
+         </option>
+        </select>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="userStatus">
+         Статус
+        </label>
+        <select class="form-select" id="userStatus" name="userStatus" required="">
+         <option value="active">
+          Активный
+         </option>
+         <option value="inactive">
+          Неактивный
+         </option>
+        </select>
+       </div>
+      </div>
+     </form>
+    </div>
+    <div class="modal-footer">
+     <button class="btn btn-secondary" onclick="closeUserModal()">
+      Отмена
+     </button>
+     <button class="btn btn-primary" onclick="saveUser()">
+      Сохранить
+     </button>
+    </div>
+   </div>
+  </div>
+  <!-- Assignment Modal -->
+  <div class="modal" id="assignModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h3>
+      Назначить заявку
+     </h3>
+     <button class="modal-close" onclick="closeAssignModal()">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <div id="assignRequestDetails">
+     </div>
+     <div class="form-group">
+      <label class="form-label" for="assignManager">
+       Выберите менеджера
+      </label>
+      <select class="form-select" id="assignManager" required="">
+       <option value="">
+        Выберите менеджера
+       </option>
+      </select>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button class="btn btn-secondary" onclick="closeAssignModal()">
+      Отмена
+     </button>
+     <button class="btn btn-primary" onclick="assignRequest()">
+      Назначить
+     </button>
+    </div>
+   </div>
+  </div>
+  <script src="js/common.js">
+  </script>
+  <script src="js/dashboard-admin.js">
+  </script>
+ </body>
+</html>

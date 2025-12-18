@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ru">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Личный кабинет менеджера - АгроЗаявки
+  </title>
+  <link href="css/common.css" rel="stylesheet"/>
+  <link href="css/dashboard-manager.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <!-- Header -->
+  <header class="header">
+   <nav class="nav-container">
+    <a class="logo" href="index.html">
+     <div class="logo-icon">
+      🌾
+     </div>
+     АгроЗаявки
+    </a>
+    <div class="user-info">
+     <div class="user-avatar" id="userAvatar">
+      М
+     </div>
+     <div class="user-details">
+      <h3 id="userName">
+       Менеджер
+      </h3>
+      <p id="userRole">
+       Менеджер
+      </p>
+     </div>
+     <button class="logout-btn" onclick="logout()">
+      Выйти
+     </button>
+    </div>
+   </nav>
+  </header>
+  <!-- Main container -->
+  <div class="main-container">
+   <!-- Sidebar -->
+   <aside class="sidebar">
+    <h3>
+     Навигация
+    </h3>
+    <ul class="nav-menu">
+     <li>
+      <a class="nav-link active" data-page="dashboard" href="#">
+       <span class="icon">
+        🏠
+       </span>
+       Главная
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="profile" href="#">
+       <span class="icon">
+        👤
+       </span>
+       Личные данные
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="requests" href="#">
+       <span class="icon">
+        📋
+       </span>
+       Заявки на исполнении
+      </a>
+     </li>
+     <li>
+      <a class="nav-link" data-page="feedback" href="#">
+       <span class="icon">
+        💬
+       </span>
+       Обратная связь
+      </a>
+     </li>
+    </ul>
+   </aside>
+   <!-- Content area -->
+   <main class="content">
+    <!-- Dashboard section -->
+    <section class="page-section active" id="dashboard">
+     <div class="content-header">
+      <h2>
+       Панель менеджера
+      </h2>
+      <p>
+       Управление заявками и обработка обращений
+      </p>
+     </div>
+     <div class="content-body">
+      <!-- Statistics -->
+      <div class="stats-grid">
+       <div class="stat-card">
+        <div class="stat-number" id="totalAssignedRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Назначено заявок
+        </div>
+       </div>
+       <div class="stat-card warning">
+        <div class="stat-number" id="pendingRequests">
+         0
+        </div>
+        <div class="stat-label">
+         В обработке
+        </div>
+       </div>
+       <div class="stat-card">
+        <div class="stat-number" id="completedRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Выполнено
+        </div>
+       </div>
+       <div class="stat-card urgent">
+        <div class="stat-number" id="urgentRequests">
+         0
+        </div>
+        <div class="stat-label">
+         Срочные
+        </div>
+       </div>
+      </div>
+      <!-- Recent requests -->
+      <div class="recent-requests">
+       <h3>
+        Последние заявки
+       </h3>
+       <div id="recentRequestsContainer">
+        <div class="empty-state">
+         <div class="icon">
+          📭
+         </div>
+         <h4>
+          Заявок пока нет
+         </h4>
+         <p>
+          Новые заявки появятся здесь
+         </p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Profile section -->
+    <section class="page-section" id="profile">
+     <div class="content-header">
+      <h2>
+       Личные данные
+      </h2>
+      <p>
+       Управление информацией профиля
+      </p>
+     </div>
+     <div class="content-body">
+      <form id="profileForm">
+       <div class="form-group">
+        <label class="form-label" for="profileFullName">
+         ФИО
+        </label>
+        <input class="form-input" id="profileFullName" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileLogin">
+         Логин
+        </label>
+        <input class="form-input" disabled="" id="profileLogin" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profilePhone">
+         Телефон
+        </label>
+        <input class="form-input" id="profilePhone" required="" type="tel"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileEmail">
+         Email
+        </label>
+        <input class="form-input" id="profileEmail" required="" type="email"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profileDepartment">
+         Участок
+        </label>
+        <input class="form-input" id="profileDepartment" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profilePosition">
+         Должность
+        </label>
+        <input class="form-input" id="profilePosition" required="" type="text"/>
+       </div>
+       <div class="form-group">
+        <label class="form-label" for="profilePositionCode">
+         Код должности
+        </label>
+        <input class="form-input" id="profilePositionCode" required="" type="text"/>
+       </div>
+       <button class="btn btn-primary" type="submit">
+        Сохранить изменения
+       </button>
+      </form>
+     </div>
+    </section>
+    <!-- Requests section -->
+    <section class="page-section" id="requests">
+     <div class="content-header">
+      <h2>
+       Заявки на исполнении
+      </h2>
+      <p>
+       Управление назначенными заявками
+      </p>
+     </div>
+     <div class="content-body">
+      <!-- Filters -->
+      <div class="filters">
+       <div class="filter-group">
+        <label class="filter-label">
+         Статус
+        </label>
+        <select class="filter-select" id="statusFilter">
+         <option value="">
+          Все статусы
+         </option>
+         <option value="new">
+          Новые
+         </option>
+         <option value="in_progress">
+          В работе
+         </option>
+         <option value="completed">
+          Выполненные
+         </option>
+        </select>
+       </div>
+       <div class="filter-group">
+        <label class="filter-label">
+         Приоритет
+        </label>
+        <select class="filter-select" id="priorityFilter">
+         <option value="">
+          Все приоритеты
+         </option>
+         <option value="high">
+          Высокий
+         </option>
+         <option value="medium">
+          Средний
+         </option>
+         <option value="low">
+          Низкий
+         </option>
+        </select>
+       </div>
+       <div class="filter-group">
+        <label class="filter-label">
+         Дата
+        </label>
+        <select class="filter-select" id="dateFilter">
+         <option value="">
+          Все даты
+         </option>
+         <option value="today">
+          Сегодня
+         </option>
+         <option value="week">
+          Эта неделя
+         </option>
+         <option value="month">
+          Этот месяц
+         </option>
+        </select>
+       </div>
+      </div>
+      <div id="requestsContainer">
+       <div class="empty-state">
+        <div class="icon">
+         📭
+        </div>
+        <h4>
+         Нет назначенных заявок
+        </h4>
+        <p>
+         Заявки появятся здесь после назначения
+        </p>
+       </div>
+      </div>
+     </div>
+    </section>
+    <!-- Feedback section -->
+    <section class="page-section" id="feedback">
+     <div class="content-header">
+      <h2>
+       Обратная связь
+      </h2>
+      <p>
+       Вопросы от пользователей и ответы
+      </p>
+     </div>
+     <div class="content-body">
+      <div id="feedbackContainer">
+       <div class="empty-state">
+        <div class="icon">
+         💬
+        </div>
+        <h4>
+         Нет сообщений
+        </h4>
+        <p>
+         Новые вопросы от пользователей появятся здесь
+        </p>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+  <!-- Request Modal -->
+  <div class="modal" id="requestModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h3>
+      Обработка заявки
+     </h3>
+     <button class="modal-close" onclick="closeModal()">
+      ×
+     </button>
+    </div>
+    <div class="modal-body">
+     <div id="requestDetails">
+     </div>
+     <div class="form-group">
+      <label class="form-label" for="requestStatus">
+       Статус
+      </label>
+      <select class="form-select" id="requestStatus">
+       <option value="new">
+        Новая
+       </option>
+       <option value="in_progress">
+        В работе
+       </option>
+       <option value="completed">
+        Выполнена
+       </option>
+       <option value="rejected">
+        Отклонена
+       </option>
+      </select>
+     </div>
+     <div class="form-group">
+      <label class="form-label" for="newComment">
+       Комментарий
+      </label>
+      <textarea class="form-textarea" id="newComment" placeholder="Добавить комментарий..."></textarea>
+     </div>
+     <div class="form-group" id="fileUploadGroup" style="display: none;">
+      <label class="form-label">
+       Загрузить отчетные материалы
+      </label>
+      <div class="file-upload" id="fileUpload">
+       <p>
+        Перетащите файлы сюда или нажмите для выбора
+       </p>
+       <input id="fileInput" multiple="" style="display: none;" type="file"/>
+      </div>
+      <div class="uploaded-files" id="uploadedFiles">
+      </div>
+     </div>
+     <div class="form-group">
+      <label class="form-label">
+       Комментарии
+      </label>
+      <div class="comments-section" id="commentsSection">
+      </div>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button class="btn btn-secondary" onclick="closeModal()">
+      Отмена
+     </button>
+     <button class="btn btn-primary" onclick="saveRequest()">
+      Сохранить
+     </button>
+    </div>
+   </div>
+  </div>
+  <script src="js/common.js">
+  </script>
+  <script src="js/dashboard-manager.js">
+  </script>
+ </body>
+</html>
