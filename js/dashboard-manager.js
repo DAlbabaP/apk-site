@@ -13,6 +13,7 @@
                 this.assignedRequests = [];
                 this.currentRequest = null;
                 this.uploadedFiles = [];
+                this.existingFiles = []; // Существующие файлы из заявки
                 this.init();
             }
 
@@ -95,12 +96,17 @@
                     // Загружаем с сервера
                     // (для менеджера API вернет назначенные на него + новые)
                     this.loadRequestsFromAPI().then(() => {
-                        this.assignedRequests = this.requestsFromServer.filter(req => req.managerId === this.currentUserId || req.status === 'new');
+                        // Приводим ID к строкам для корректного сравнения
+                        const currentUserIdStr = String(this.currentUserId);
+                        this.assignedRequests = this.requestsFromServer.filter(req => 
+                            String(req.managerId) === currentUserIdStr || req.status === 'new'
+                        );
                         this.renderRecentRequests();
                         this.renderAllRequests();
                         this.updateStats();
                     });
                 } catch (error) {
+                    console.error('Ошибка загрузки заявок:', error);
                     this.assignedRequests = [];
                 }
             }
@@ -440,15 +446,41 @@
 
             // Открытие модального окна заявки
             openRequestModal(requestId) {
-                const request = this.assignedRequests.find(req => req.id === requestId);
-                if (!request) return;
+                // Приводим requestId к строке для корректного сравнения
+                const requestIdStr = String(requestId);
+                const request = this.assignedRequests.find(req => String(req.id) === requestIdStr);
+                
+                if (!request) {
+                    console.error('Заявка не найдена:', requestIdStr, 'Доступные заявки:', this.assignedRequests.map(r => r.id));
+                    this.showNotification('Заявка не найдена', 'error');
+                    return;
+                }
 
                 this.currentRequest = request;
                 this.uploadedFiles = [];
 
+                // Если заявка новая и менеджер еще не назначен, автоматически назначаем текущего менеджера
+                if (request.status === 'new' && (!request.managerId || request.managerId === null || request.managerId === 'null')) {
+                    this.updateRequestOnServer({
+                        id: request.id,
+                        managerId: this.currentUserId,
+                        status: 'in_progress'
+                    }).then(success => {
+                        if (success) {
+                            request.managerId = this.currentUserId;
+                            request.status = 'in_progress';
+                            this.showNotification('Заявка назначена на вас', 'success');
+                        } else {
+                            console.error('Не удалось назначить менеджера на заявку');
+                        }
+                    }).catch(error => {
+                        console.error('Ошибка при назначении менеджера:', error);
+                    });
+                }
+
                 // Заполняем детали заявки
                 const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const user = this.users.find(u => u.id === request.userId) || users.find(u => String(u.id) === request.userId);
+                const user = this.users.find(u => String(u.id) === String(request.userId)) || users.find(u => String(u.id) === String(request.userId));
                 
                 document.getElementById('requestDetails').innerHTML = `
                     <div style="margin-bottom: 1.5rem; padding: 1rem; background: var(--background-color); border-radius: var(--border-radius);">
@@ -463,11 +495,14 @@
                 `;
 
                 // Устанавливаем текущий статус
-                document.getElementById('requestStatus').value = request.status;
+                document.getElementById('requestStatus').value = request.status || 'new';
 
                 // Показываем/скрываем загрузку файлов
                 const fileUploadGroup = document.getElementById('fileUploadGroup');
                 fileUploadGroup.style.display = request.status === 'completed' ? 'block' : 'none';
+
+                // Загружаем существующие файлы
+                this.loadExistingFiles(request);
 
                 // Загружаем комментарии
                 this.renderComments();
@@ -479,42 +514,227 @@
             // Отображение комментариев
             renderComments() {
                 const container = document.getElementById('commentsSection');
-                const comments = this.currentRequest.comments || [];
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                
+                // Проверяем, что currentRequest существует
+                if (!this.currentRequest) {
+                    container.innerHTML = '<p style="color: var(--gray-medium); text-align: center;">Нет комментариев</p>';
+                    return;
+                }
+                
+                // Парсим комментарии, если они в виде JSON строки
+                let comments = this.currentRequest.comments;
+                
+                // Обрабатываем разные форматы комментариев
+                if (comments === null || comments === undefined) {
+                    comments = [];
+                } else if (typeof comments === 'string') {
+                    // Если это пустая строка или "[]", делаем пустой массив
+                    if (comments.trim() === '' || comments.trim() === '[]') {
+                        comments = [];
+                    } else {
+                        try {
+                            comments = JSON.parse(comments);
+                        } catch (e) {
+                            console.warn('Ошибка парсинга комментариев:', e, comments);
+                            comments = [];
+                        }
+                    }
+                }
+                
+                // Убеждаемся, что это массив
+                if (!Array.isArray(comments)) {
+                    console.warn('Комментарии не являются массивом:', typeof comments, comments);
+                    comments = [];
+                }
+                
+                // Объединяем все источники пользователей
+                const localUsers = JSON.parse(localStorage.getItem('users') || '[]');
+                const allUsers = [...this.users, ...localUsers];
+                
+                // Убираем дубликаты по ID
+                const uniqueUsers = [];
+                const seenIds = new Set();
+                allUsers.forEach(user => {
+                    const userId = String(user.id);
+                    if (!seenIds.has(userId)) {
+                        seenIds.add(userId);
+                        uniqueUsers.push(user);
+                    }
+                });
 
                 if (comments.length === 0) {
                     container.innerHTML = '<p style="color: var(--gray-medium); text-align: center;">Нет комментариев</p>';
                 } else {
                     container.innerHTML = comments.map(comment => {
-                        const user = users.find(u => u.id === comment.userId);
+                        // Проверяем, что comment является объектом
+                        if (!comment || typeof comment !== 'object') {
+                            return '';
+                        }
+                        
+                        const userId = String(comment.userId || comment.user_id || '');
+                        const userLogin = comment.login || comment.userLogin || '';
+                        const commentFullName = comment.fullName || comment.full_name || '';
+                        
+                        // Ищем пользователя по ID (с учетом разных форматов)
+                        let user = uniqueUsers.find(u => {
+                            const uId = String(u.id);
+                            return uId === userId || uId === String(parseInt(userId)) || String(parseInt(uId)) === userId;
+                        });
+                        
+                        // Если не нашли по ID, ищем по логину
+                        if (!user && userLogin) {
+                            user = uniqueUsers.find(u => String(u.login) === String(userLogin));
+                        }
+                        
+                        // Если все еще не нашли, проверяем текущего пользователя
+                        if (!user && userId === String(this.currentUserId)) {
+                            user = {
+                                id: this.currentUserId,
+                                fullName: this.currentUser?.fullName || 'Текущий пользователь',
+                                login: this.currentUser?.login || ''
+                            };
+                        }
+                        
+                        // Если пользователь не найден, используем полное имя из комментария, логин или "Неизвестно"
+                        const authorName = user ? user.fullName : (commentFullName || userLogin || 'Неизвестно');
+                        
+                        // Отладочная информация (можно убрать в продакшене)
+                        if (!user && userId) {
+                            console.debug('Пользователь не найден для комментария:', {
+                                userId,
+                                userLogin,
+                                commentFullName,
+                                availableUsers: uniqueUsers.map(u => ({ id: u.id, login: u.login, fullName: u.fullName }))
+                            });
+                        }
+                        const message = comment.message || comment.text || comment.comment || '—';
+                        const createdAt = comment.createdAt || comment.created_at || comment.date;
+                        
                         return `
                             <div class="comment">
                                 <div class="comment-header">
-                                    <span class="comment-author">${user ? user.fullName : 'Неизвестно'}</span>
-                                    <span class="comment-date">${new Date(comment.createdAt).toLocaleString('ru-RU')}</span>
+                                    <span class="comment-author">${authorName}</span>
+                                    <span class="comment-date">${createdAt ? new Date(createdAt).toLocaleString('ru-RU') : '—'}</span>
                                 </div>
-                                <div class="comment-text">${comment.message}</div>
+                                <div class="comment-text">${message}</div>
                             </div>
                         `;
-                    }).join('');
+                    }).filter(html => html !== '').join('');
                 }
             }
 
             // Сохранение заявки
-            saveRequest() {
+            async saveRequest() {
                 const status = document.getElementById('requestStatus').value;
                 const comment = document.getElementById('newComment').value.trim();
 
-                this.updateRequestOnServer({
+                // Если есть новый комментарий, добавляем его
+                let comments = Array.isArray(this.currentRequest.comments) 
+                    ? [...this.currentRequest.comments] 
+                    : (typeof this.currentRequest.comments === 'string' && this.currentRequest.comments 
+                        ? (() => {
+                            try {
+                                return JSON.parse(this.currentRequest.comments);
+                            } catch (e) {
+                                return [];
+                            }
+                        })() 
+                        : []);
+                
+                if (!Array.isArray(comments)) {
+                    comments = [];
+                }
+                
+                if (comment) {
+                    comments.push({
+                        userId: this.currentUserId,
+                        login: this.currentUser?.login || '',
+                        fullName: this.currentUser?.fullName || '',
+                        message: comment,
+                        createdAt: new Date().toISOString()
+                    });
+                }
+
+                // Обрабатываем файлы - используем существующие файлы и добавляем новые
+                let files = this.existingFiles || [];
+                
+                // Если нет существующих файлов, пытаемся загрузить из заявки
+                if (files.length === 0) {
+                    files = Array.isArray(this.currentRequest.files) 
+                        ? [...this.currentRequest.files] 
+                        : (typeof this.currentRequest.files === 'string' && this.currentRequest.files 
+                            ? (() => {
+                                try {
+                                    return JSON.parse(this.currentRequest.files);
+                                } catch (e) {
+                                    return [];
+                                }
+                            })() 
+                            : []);
+                }
+                
+                if (!Array.isArray(files)) {
+                    files = [];
+                }
+
+                // Добавляем новые файлы
+                if (this.uploadedFiles.length > 0) {
+                    for (const file of this.uploadedFiles) {
+                        try {
+                            // Читаем файл как base64
+                            const base64 = await this.fileToBase64(file.data);
+                            files.push({
+                                name: file.name,
+                                size: file.size,
+                                type: file.type,
+                                data: base64,
+                                uploadedAt: new Date().toISOString(),
+                                uploadedBy: this.currentUserId
+                            });
+                        } catch (error) {
+                            console.error('Ошибка чтения файла:', error);
+                            this.showNotification('Ошибка при обработке файла: ' + file.name, 'error');
+                        }
+                    }
+                }
+
+                // Подготавливаем данные для обновления
+                const updateData = {
                     id: this.currentRequest.id,
                     status: status,
                     description: this.currentRequest.description,
                     priority: this.currentRequest.priority
-                }).then(success => {
+                };
+
+                // Если менеджер еще не назначен, назначаем его
+                if (!this.currentRequest.managerId || this.currentRequest.managerId === null) {
+                    updateData.managerId = this.currentUserId;
+                }
+
+                // Если есть комментарии (новые или существующие), отправляем их
+                if (comments.length > 0) {
+                    updateData.comments = comments;
+                }
+
+                // Если есть файлы, отправляем их
+                if (files.length > 0) {
+                    updateData.files = files;
+                }
+
+                this.updateRequestOnServer(updateData).then(success => {
                     if (!success) {
                         this.showNotification('Ошибка при сохранении заявки', 'error');
                         return;
                     }
+                    
+                    // Обновляем данные локально
+                    if (comments.length > 0) {
+                        this.currentRequest.comments = comments;
+                    }
+                    if (files.length > 0) {
+                        this.currentRequest.files = files;
+                    }
+                    
                     // Перезагружаем заявки
                     this.loadAssignedRequests();
                     this.showNotification('Заявка успешно обновлена', 'success');
@@ -522,11 +742,128 @@
                 });
             }
 
+            // Конвертация файла в base64
+            fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        // Убираем префикс data:type;base64,
+                        const base64 = reader.result.split(',')[1];
+                        resolve(base64);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Загрузка существующих файлов из заявки
+            loadExistingFiles(request) {
+                let files = request.files || [];
+                
+                // Парсим файлы, если они в виде JSON строки
+                if (typeof files === 'string') {
+                    try {
+                        files = JSON.parse(files);
+                    } catch (e) {
+                        files = [];
+                    }
+                }
+                
+                if (!Array.isArray(files)) {
+                    files = [];
+                }
+
+                // Отображаем существующие файлы
+                const container = document.getElementById('uploadedFiles');
+                if (files.length > 0) {
+                    const existingFilesHtml = files.map((file, index) => `
+                        <div class="file-item">
+                            <span>${file.name || 'Файл'} (${this.formatFileSize(file.size || 0)})</span>
+                            <div>
+                                <button class="file-download" onclick="managerDashboard.downloadFile(${index}, '${file.name || 'file'}')" title="Скачать">⬇</button>
+                                ${request.status === 'completed' ? `<button class="file-remove" onclick="managerDashboard.removeExistingFile(${index})" title="Удалить">×</button>` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    // Сохраняем существующие файлы для дальнейшей работы
+                    this.existingFiles = files;
+                    
+                    // Добавляем к новым файлам, если они есть
+                    const newFilesHtml = this.uploadedFiles.map((file, index) => `
+                        <div class="file-item">
+                            <span>${file.name} (${this.formatFileSize(file.size)})</span>
+                            <button class="file-remove" onclick="managerDashboard.removeFile(${index})">×</button>
+                        </div>
+                    `).join('');
+                    
+                    container.innerHTML = existingFilesHtml + newFilesHtml;
+                } else {
+                    // Только новые файлы
+                    this.existingFiles = [];
+                    this.renderUploadedFiles();
+                }
+            }
+
+            // Скачивание файла
+            downloadFile(fileIndex, fileName) {
+                if (!this.existingFiles || !this.existingFiles[fileIndex]) {
+                    this.showNotification('Файл не найден', 'error');
+                    return;
+                }
+
+                const file = this.existingFiles[fileIndex];
+                if (!file.data) {
+                    this.showNotification('Данные файла отсутствуют', 'error');
+                    return;
+                }
+
+                try {
+                    // Конвертируем base64 обратно в blob
+                    const byteCharacters = atob(file.data);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: file.type || 'application/octet-stream' });
+
+                    // Создаем ссылку для скачивания
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName || file.name || 'file';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                } catch (error) {
+                    console.error('Ошибка скачивания файла:', error);
+                    this.showNotification('Ошибка при скачивании файла', 'error');
+                }
+            }
+
+            // Удаление существующего файла
+            removeExistingFile(fileIndex) {
+                if (!this.existingFiles || !this.existingFiles[fileIndex]) {
+                    return;
+                }
+
+                this.existingFiles.splice(fileIndex, 1);
+                
+                // Обновляем файлы в заявке
+                this.currentRequest.files = this.existingFiles;
+                
+                // Перерисовываем список файлов
+                this.loadExistingFiles(this.currentRequest);
+            }
+
             // Закрытие модального окна
             closeModal() {
                 document.getElementById('requestModal').classList.remove('show');
                 document.getElementById('newComment').value = '';
                 this.uploadedFiles = [];
+                this.existingFiles = [];
                 this.renderUploadedFiles();
                 this.currentRequest = null;
             }
@@ -538,20 +875,65 @@
 
             // Нормализация заявок из локального хранилища (приводим id и ссылки к строкам)
             normalizeRequests(requests) {
-                return (requests || []).map(req => ({
-                    id: String(req.id),
-                    title: req.title || req.name || req.requestTitle || '—',
-                    userId: req.userId ? String(req.userId) : (req.user_id ? String(req.user_id) : null),
-                    managerId: req.managerId ? String(req.managerId) : (req.manager_id ? String(req.manager_id) : null),
-                    priority: req.priority || req.requestPriority || 'medium',
-                    status: req.status || 'new',
-                    description: req.description || req.requestDescription || '',
-                    category: req.category || req.requestCategory || '',
-                    files: req.files || [],
-                    comments: req.comments || [],
-                    createdAt: this.normalizeDate(req.createdAt || req.created_at) || new Date().toISOString(),
-                    updatedAt: this.normalizeDate(req.updatedAt || req.updated_at) || null
-                }));
+                return (requests || []).map(req => {
+                    // Парсим комментарии, если они в виде JSON строки
+                    let comments = req.comments;
+                    
+                    if (comments === null || comments === undefined) {
+                        comments = [];
+                    } else if (typeof comments === 'string') {
+                        // Если это пустая строка или "[]", делаем пустой массив
+                        if (comments.trim() === '' || comments.trim() === '[]') {
+                            comments = [];
+                        } else {
+                            try {
+                                comments = JSON.parse(comments);
+                            } catch (e) {
+                                console.warn('Ошибка парсинга комментариев при нормализации:', e);
+                                comments = [];
+                            }
+                        }
+                    }
+                    
+                    // Убеждаемся, что это массив
+                    if (!Array.isArray(comments)) {
+                        comments = [];
+                    }
+                    
+                    // Парсим files аналогично
+                    let files = req.files;
+                    if (files === null || files === undefined) {
+                        files = [];
+                    } else if (typeof files === 'string') {
+                        if (files.trim() === '' || files.trim() === '[]') {
+                            files = [];
+                        } else {
+                            try {
+                                files = JSON.parse(files);
+                            } catch (e) {
+                                files = [];
+                            }
+                        }
+                    }
+                    if (!Array.isArray(files)) {
+                        files = [];
+                    }
+                    
+                    return {
+                        id: String(req.id),
+                        title: req.title || req.name || req.requestTitle || '—',
+                        userId: req.userId ? String(req.userId) : (req.user_id ? String(req.user_id) : null),
+                        managerId: req.managerId ? String(req.managerId) : (req.manager_id ? String(req.manager_id) : null),
+                        priority: req.priority || req.requestPriority || 'medium',
+                        status: req.status || 'new',
+                        description: req.description || req.requestDescription || '',
+                        category: req.category || req.requestCategory || '',
+                        files: files,
+                        comments: comments,
+                        createdAt: this.normalizeDate(req.createdAt || req.created_at) || new Date().toISOString(),
+                        updatedAt: this.normalizeDate(req.updatedAt || req.updated_at) || null
+                    };
+                });
             }
 
             // Нормализация дат
@@ -605,6 +987,8 @@
                 try {
                     const session = JSON.parse(localStorage.getItem('currentSession') || 'null');
                     if (!session || !session.token) {
+                        console.error('Нет токена авторизации');
+                        this.showNotification('Ошибка авторизации. Пожалуйста, войдите снова', 'error');
                         return false;
                     }
 
@@ -617,10 +1001,34 @@
                         body: JSON.stringify(payload)
                     });
 
+                    if (response.status === 403) {
+                        const errorData = await response.json().catch(() => ({ error: 'Доступ запрещен' }));
+                        console.error('403 Forbidden:', errorData);
+                        this.showNotification('Доступ запрещен. Проверьте права доступа', 'error');
+                        return false;
+                    }
+
+                    if (response.status === 401) {
+                        console.error('401 Unauthorized - токен истек');
+                        this.showNotification('Сессия истекла. Пожалуйста, войдите снова', 'error');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
+                        return false;
+                    }
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ error: 'Ошибка сервера' }));
+                        console.error('Ошибка обновления заявки:', response.status, errorData);
+                        this.showNotification('Ошибка при обновлении заявки: ' + (errorData.error || 'Неизвестная ошибка'), 'error');
+                        return false;
+                    }
+
                     const data = await response.json();
                     return !!data.success;
                 } catch (error) {
                     console.error('Ошибка обновления заявки:', error);
+                    this.showNotification('Ошибка сети при обновлении заявки', 'error');
                     return false;
                 }
             }
@@ -659,15 +1067,17 @@
                     if (data.success && data.users) {
                         this.users = data.users.map(user => ({
                             id: String(user.id),
-                            login: user.login,
-                            email: user.email,
-                            phone: user.phone,
-                            role: user.role,
-                            fullName: user.full_name || user.fullName || user.login || '—',
+                            login: user.login || '',
+                            email: user.email || '',
+                            phone: user.phone || '',
+                            role: user.role || 'user',
+                            fullName: user.full_name || user.fullName || user.login || 'Неизвестно',
                             status: user.status === 'blocked' ? 'inactive' : (user.status || 'active'),
                             createdAt: user.created_at || user.createdAt
                         }));
+                        console.log('Загружено пользователей из API:', this.users.length, this.users);
                     } else {
+                        console.warn('Не удалось загрузить пользователей из API:', data);
                         this.users = [];
                     }
                 } catch (error) {

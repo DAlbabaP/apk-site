@@ -144,7 +144,7 @@ function handleUpdate($pdo) {
 
     if (isset($data['managerId'])) {
         $fields[] = 'manager_id = ?';
-        $params[] = $data['managerId'] ?: null;
+        $params[] = $data['managerId'] ? (int)$data['managerId'] : null;
     }
 
     if (isset($data['priority'])) {
@@ -155,6 +155,20 @@ function handleUpdate($pdo) {
     if (isset($data['description'])) {
         $fields[] = 'description = ?';
         $params[] = $data['description'];
+    }
+
+    if (isset($data['comments'])) {
+        // Комментарии должны быть массивом, преобразуем в JSON
+        $commentsJson = is_array($data['comments']) ? json_encode($data['comments'], JSON_UNESCAPED_UNICODE) : $data['comments'];
+        $fields[] = 'comments = ?';
+        $params[] = $commentsJson;
+    }
+
+    if (isset($data['files'])) {
+        // Файлы должны быть массивом, преобразуем в JSON
+        $filesJson = is_array($data['files']) ? json_encode($data['files'], JSON_UNESCAPED_UNICODE) : $data['files'];
+        $fields[] = 'files = ?';
+        $params[] = $filesJson;
     }
 
     if (empty($fields)) {

@@ -11,9 +11,9 @@
                 this.init();
             }
 
-            init() {
+            async init() {
                 this.checkAuth();
-                this.loadUserData();
+                await this.loadUserData();
                 this.loadUserRequests();
                 this.updateStats();
                 this.initNavigation();
@@ -50,23 +50,72 @@
             }
 
             // Загрузка данных пользователя
-            loadUserData() {
+            async loadUserData() {
                 if (!this.currentUser) return;
 
+                // Сначала пытаемся загрузить из API
+                try {
+                    const session = JSON.parse(localStorage.getItem('currentSession') || 'null');
+                    if (session && session.token) {
+                        const response = await fetch('api/users.php/me', {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': 'Bearer ' + session.token,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success && data.user) {
+                                const user = data.user;
+                                const fullName = user.full_name || user.fullName || this.currentUser.fullName || 'Пользователь';
+                                
+                                // Обновляем информацию в шапке
+                                document.getElementById('userName').textContent = fullName;
+                                document.getElementById('userRole').textContent = 'Пользователь';
+                                document.getElementById('userAvatar').textContent = fullName.charAt(0).toUpperCase();
+
+                                // Заполняем форму профиля
+                                document.getElementById('profileFullName').value = fullName;
+                                document.getElementById('profileLogin').value = user.login || '';
+                                document.getElementById('profilePhone').value = user.phone || '';
+                                document.getElementById('profileEmail').value = user.email || '';
+
+                                // Обновляем сессию
+                                this.currentUser.fullName = fullName;
+                                localStorage.setItem('currentSession', JSON.stringify(this.currentUser));
+                                return;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Ошибка загрузки данных пользователя из API:', error);
+                }
+
+                // Если не удалось загрузить из API, используем данные из localStorage
                 const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const user = users.find(u => u.id === this.currentUser.userId);
+                const user = users.find(u => String(u.id) === String(this.currentUser.userId));
                 
                 if (user) {
+                    const fullName = user.fullName || this.currentUser.fullName || 'Пользователь';
+                    
                     // Обновляем информацию в шапке
-                    document.getElementById('userName').textContent = user.fullName;
+                    document.getElementById('userName').textContent = fullName;
                     document.getElementById('userRole').textContent = 'Пользователь';
-                    document.getElementById('userAvatar').textContent = user.fullName.charAt(0).toUpperCase();
+                    document.getElementById('userAvatar').textContent = fullName.charAt(0).toUpperCase();
 
                     // Заполняем форму профиля
-                    document.getElementById('profileFullName').value = user.fullName;
-                    document.getElementById('profileLogin').value = user.login;
-                    document.getElementById('profilePhone').value = user.phone;
-                    document.getElementById('profileEmail').value = user.email;
+                    document.getElementById('profileFullName').value = fullName;
+                    document.getElementById('profileLogin').value = user.login || '';
+                    document.getElementById('profilePhone').value = user.phone || '';
+                    document.getElementById('profileEmail').value = user.email || '';
+                } else {
+                    // Используем данные из сессии
+                    const fullName = this.currentUser.fullName || 'Пользователь';
+                    document.getElementById('userName').textContent = fullName;
+                    document.getElementById('userRole').textContent = 'Пользователь';
+                    document.getElementById('userAvatar').textContent = fullName.charAt(0).toUpperCase();
                 }
             }
 
@@ -168,7 +217,10 @@
                         this.currentUser.fullName = updatedData.fullName;
                         localStorage.setItem('currentSession', JSON.stringify(this.currentUser));
                         
-                        this.loadUserData();
+                        // Обновляем информацию в шапке сразу
+                        document.getElementById('userName').textContent = updatedData.fullName;
+                        document.getElementById('userAvatar').textContent = updatedData.fullName.charAt(0).toUpperCase();
+                        
                         this.showNotification('Профиль успешно обновлен', 'success');
                     }
                 } catch (error) {
@@ -220,28 +272,30 @@
                     `;
                 } else {
                     container.innerHTML = `
-                        <table class="requests-table">
-                            <thead>
-                                <tr>
-                                    <th>Заголовок</th>
-                                    <th>Категория</th>
-                                    <th>Приоритет</th>
-                                    <th>Статус</th>
-                                    <th>Дата создания</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${recentRequests.map(req => `
+                        <div class="table-container">
+                            <table class="requests-table">
+                                <thead>
                                     <tr>
-                                        <td>${req.title}</td>
-                                        <td>${this.getCategoryName(req.category)}</td>
-                                        <td>${this.getPriorityName(req.priority)}</td>
-                                        <td><span class="status-badge status-${req.status}">${this.getStatusName(req.status)}</span></td>
-                                        <td>${new Date(req.createdAt).toLocaleDateString('ru-RU')}</td>
+                                        <th>Заголовок</th>
+                                        <th>Категория</th>
+                                        <th>Приоритет</th>
+                                        <th>Статус</th>
+                                        <th>Дата создания</th>
                                     </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    ${recentRequests.map(req => `
+                                        <tr>
+                                            <td>${req.title}</td>
+                                            <td>${this.getCategoryName(req.category)}</td>
+                                            <td>${this.getPriorityName(req.priority)}</td>
+                                            <td><span class="status-badge status-${req.status}">${this.getStatusName(req.status)}</span></td>
+                                            <td>${new Date(req.createdAt).toLocaleDateString('ru-RU')}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
                         <div style="text-align: center; margin-top: 1rem;">
                             <a href="#" class="btn btn-secondary" data-page="requests">Показать все заявки</a>
                         </div>
@@ -276,30 +330,32 @@
                     );
 
                     container.innerHTML = `
-                        <table class="requests-table">
-                            <thead>
-                                <tr>
-                                    <th>Заголовок</th>
-                                    <th>Категория</th>
-                                    <th>Приоритет</th>
-                                    <th>Статус</th>
-                                    <th>Дата создания</th>
-                                    <th>Описание</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${sortedRequests.map(req => `
+                        <div class="table-container">
+                            <table class="requests-table">
+                                <thead>
                                     <tr>
-                                        <td><strong>${req.title}</strong></td>
-                                        <td>${this.getCategoryName(req.category)}</td>
-                                        <td>${this.getPriorityName(req.priority)}</td>
-                                        <td><span class="status-badge status-${req.status}">${this.getStatusName(req.status)}</span></td>
-                                        <td>${new Date(req.createdAt).toLocaleDateString('ru-RU')}</td>
-                                        <td>${req.description.length > 100 ? req.description.substring(0, 100) + '...' : req.description}</td>
+                                        <th>Заголовок</th>
+                                        <th>Категория</th>
+                                        <th>Приоритет</th>
+                                        <th>Статус</th>
+                                        <th>Дата создания</th>
+                                        <th>Описание</th>
                                     </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    ${sortedRequests.map(req => `
+                                        <tr>
+                                            <td><strong>${req.title}</strong></td>
+                                            <td>${this.getCategoryName(req.category)}</td>
+                                            <td>${this.getPriorityName(req.priority)}</td>
+                                            <td><span class="status-badge status-${req.status}">${this.getStatusName(req.status)}</span></td>
+                                            <td>${new Date(req.createdAt).toLocaleDateString('ru-RU')}</td>
+                                            <td>${req.description ? (req.description.length > 100 ? req.description.substring(0, 100) + '...' : req.description) : '—'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
                     `;
                 }
 

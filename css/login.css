@@ -128,16 +128,27 @@
             color: var(--error-color);
             font-size: 0.875rem;
             margin-top: 0.5rem;
-            padding: 0.75rem;
+            padding: 0.5rem 0.75rem;
             background: rgba(211, 47, 47, 0.1);
             border-radius: var(--border-radius);
             border-left: 4px solid var(--error-color);
             display: none;
+            min-height: 0;
+            transition: all 0.3s ease;
         }
 
         .error-message.show {
             display: block;
             animation: fadeIn 0.3s ease;
+        }
+        
+        /* Убираем лишние отступы, когда сообщение скрыто */
+        .form-group:has(.error-message:not(.show)) {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group:has(.error-message.show) {
+            margin-bottom: 1.5rem;
         }
 
         @keyframes fadeIn {
@@ -287,6 +298,13 @@
             background: var(--white);
             border-radius: 4px;
             border: 1px solid var(--gray-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .demo-account:hover {
+            background: rgba(46, 125, 50, 0.05);
+            border-color: var(--primary-color);
         }
 
         .demo-account span {

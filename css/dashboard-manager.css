@@ -599,6 +599,33 @@
             height: 24px;
             cursor: pointer;
             font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .file-download {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: var(--background-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-item:last-child {
+            margin-bottom: 0;
         }
 
         /* Comments */

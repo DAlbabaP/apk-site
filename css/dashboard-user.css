@@ -295,8 +295,17 @@
             color: var(--primary-color);
         }
 
+        /* Контейнер для таблицы с прокруткой */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .requests-table {
             width: 100%;
+            min-width: 800px; /* Минимальная ширина для корректного отображения */
             border-collapse: collapse;
             background: var(--white);
             border-radius: var(--border-radius);
@@ -309,6 +318,14 @@
             padding: 1rem;
             text-align: left;
             border-bottom: 1px solid var(--gray-light);
+            white-space: nowrap; /* Предотвращаем перенос текста в ячейках */
+        }
+
+        /* Колонка с описанием может быть шире */
+        .requests-table td:last-child {
+            white-space: normal;
+            max-width: 300px;
+            word-wrap: break-word;
         }
 
         .requests-table th {
@@ -424,13 +441,24 @@
                 grid-template-columns: 1fr;
             }
 
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
             .requests-table {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+                min-width: 600px;
             }
 
             .requests-table th,
             .requests-table td {
-                padding: 0.75rem 0.5rem;
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .requests-table td:last-child {
+                max-width: 200px;
             }
         }
 

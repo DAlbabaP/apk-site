@@ -183,7 +183,25 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelectorAll('.demo-account').forEach(account => {
     account.addEventListener('click', () => {
         const credentials = account.querySelector('span').textContent.split(' / ');
-        document.getElementById('login').value = credentials[0];
-        document.getElementById('password').value = credentials[1];
+        const loginInput = document.getElementById('login');
+        const passwordInput = document.getElementById('password');
+        
+        // Заполняем поля
+        loginInput.value = credentials[0].trim();
+        passwordInput.value = credentials[1].trim();
+        
+        // Убираем классы ошибок и успеха, если они есть
+        loginInput.classList.remove('error', 'success');
+        passwordInput.classList.remove('error', 'success');
+        
+        // Скрываем сообщения об ошибках
+        const errorElement = document.getElementById('loginError');
+        if (errorElement) {
+            errorElement.classList.remove('show');
+            errorElement.textContent = '';
+        }
+        
+        // Фокусируемся на поле логина
+        loginInput.focus();
     });
 });
